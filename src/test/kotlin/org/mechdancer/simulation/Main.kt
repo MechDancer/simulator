@@ -2,8 +2,8 @@ package org.mechdancer.simulation
 
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.toPose
-import org.mechdancer.common.toTransformation
-import org.mechdancer.struct.StructBuilder.Companion.struct
+import org.mechdancer.geometry.transformation.Transformation
+import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
 
 fun main() {
@@ -23,11 +23,14 @@ fun main() {
     }
 
     while (true) {
-        val robotToOdometry = robot.what.drive(velocity(0.1, 0.5)).toTransformation()
-        robot
+        struct("odometry") {
+            sub(robot) {
+                pose = robot.what.drive(velocity(0.1, 0.5))
+            }
+        }
             .devices
-            .mapValues { (_, toRobot) -> (robotToOdometry * toRobot).toPose() }
             .values
+            .map(Transformation::toPose)
             .joinToString(" ") { (p, _) -> "${p.x} ${p.y} " }
             .let(::println)
         Thread.sleep(100L)

@@ -12,12 +12,10 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-/**
- * 底盘模型
- */
-class Chassis {
+/** 初始状态为 [origin] 的通用底盘模型 */
+class Chassis(origin: Stamped<Odometry>? = null) {
     /** 位姿 */
-    var odometry = stamp(Odometry())
+    var odometry = origin ?: stamp(Odometry())
         private set
 
     /** 运动状态 */

@@ -12,6 +12,7 @@ class Struct<T>(
 ) {
     private val children = children.toMap()
 
+    /** 计算并缓存结构体到其所有各级子结构体的变换关系 */
     val devices: Map<Struct<*>, Transformation> by lazy {
         this.children
             .flatMap { (child, childToThis) ->
