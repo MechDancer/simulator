@@ -17,4 +17,14 @@ sealed class Velocity {
         val vy: Double,
         val w: Double
     ) : Velocity()
+
+    companion object {
+        fun velocity() = Static
+
+        fun velocity(v: Number, w: Number) =
+            NonOmnidirectional(v.toDouble(), w.toDouble())
+
+        fun velocity(vx: Number, vy: Number, w: Number) =
+            Omnidirectional(vx.toDouble(), vy.toDouble(), w.toDouble())
+    }
 }

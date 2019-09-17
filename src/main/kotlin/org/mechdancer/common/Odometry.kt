@@ -3,6 +3,7 @@ package org.mechdancer.common
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.implement.vector.Vector2D
+import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.algebra.implement.vector.vector2DOfZero
 import org.mechdancer.geometry.angle.Angle
 import org.mechdancer.geometry.angle.rotate
@@ -32,4 +33,9 @@ data class Odometry(
     infix fun minusState(mark: Odometry) =
         Odometry((p - mark.p).rotate(-mark.d),
                  d.rotate(-mark.d))
+
+    companion object {
+        fun odometry(x: Number, y: Number, theta: Number = 0) =
+            Odometry(vector2DOf(x, y), theta.toRad())
+    }
 }
