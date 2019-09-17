@@ -21,7 +21,7 @@ data class Odometry(
     /** 增量 [delta] 累加到里程 */
     infix fun plusDelta(delta: Odometry) =
         Odometry(p + delta.p.rotate(d),
-                                                    d rotate delta.d)
+                 d rotate delta.d)
 
     /** 里程回滚到增量 [delta] 之前 */
     infix fun minusDelta(delta: Odometry) =
@@ -31,5 +31,5 @@ data class Odometry(
     /** 计算里程从标记 [mark] 到当前状态的增量 */
     infix fun minusState(mark: Odometry) =
         Odometry((p - mark.p).rotate(-mark.d),
-                                                    d.rotate(-mark.d))
+                 d.rotate(-mark.d))
 }
