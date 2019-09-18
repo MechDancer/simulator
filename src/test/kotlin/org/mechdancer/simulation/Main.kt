@@ -5,11 +5,20 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.mechdancer.algebra.function.equation.solve
+import org.mechdancer.algebra.function.vector.norm
+import org.mechdancer.algebra.function.vector.x
+import org.mechdancer.algebra.function.vector.y
+import org.mechdancer.algebra.function.vector.z
+import org.mechdancer.algebra.implement.equation.builder.equations
+import org.mechdancer.common.Odometry
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.filters.DiscreteDelayer.Companion.delayOn
 import org.mechdancer.common.toPose
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 // 机器人机械结构
@@ -53,6 +62,22 @@ fun main() = runBlocking {
         encodersOnRobot
             .onEach { (encoder, pose) -> encoder.update(pose, delta) }
             .keys
-            .also(::println)
+//            .also(::println)
+        println("-------------------")
+        println("Equation Solve:")
+        println(buildInverseEquation().solve()!!.let { Odometry.odometry(it.x,it.y,it.z) })
+        println("Actual:")
+        println(delta)
+        println("-------------------")
+        println()
     }
 }
+
+fun buildInverseEquation() =
+    equations {
+        robot.devices
+            .mapNotNull { (k, v) -> (k as? Encoder<*>)?.to(v.toPose()) }
+            .forEach { (k, v) ->
+                this[sin(v.d.asRadian()), cos(v.d.asRadian()), v.p.norm()] = k.value
+            }
+    }

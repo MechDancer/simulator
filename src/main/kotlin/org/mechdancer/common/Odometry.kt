@@ -3,6 +3,7 @@ package org.mechdancer.common
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.implement.vector.Vector2D
+import org.mechdancer.algebra.implement.vector.listVectorOf
 import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.algebra.implement.vector.vector2DOfZero
 import org.mechdancer.geometry.angle.Angle
@@ -21,8 +22,10 @@ data class Odometry(
 ) {
     /** 增量 [delta] 累加到里程 */
     infix fun plusDelta(delta: Odometry) =
-        Odometry(p + delta.p.rotate(d),
-                 d rotate delta.d)
+        Odometry(
+            p + delta.p.rotate(d),
+            d rotate delta.d
+        )
 
     /** 里程回滚到增量 [delta] 之前 */
     infix fun minusDelta(delta: Odometry) =
@@ -32,6 +35,8 @@ data class Odometry(
     /** 计算里程从标记 [mark] 到当前状态的增量 */
     infix fun minusState(mark: Odometry) =
         (-mark.toTransformation())(this)
+
+    override fun toString(): String = listVectorOf(p.x, p.y, d.asRadian()).toString()
 
     companion object {
         fun odometry(x: Number, y: Number, theta: Number = 0) =
