@@ -26,6 +26,8 @@ allprojects {
         implementation(kotlin("stdlib-jdk8"))
         // 自动依赖本地库文件
         implementation(fileTree("libs"))
+        // 使用示例中采用协程
+        testImplementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "+")
 
         testImplementation("junit", "junit", "+")
         testImplementation(kotlin("test-junit"))
