@@ -8,13 +8,13 @@ import org.mechdancer.geometry.transformation.Transformation
 class StructBuilderDSL<T> private constructor(private val root: T) : RelationRecorderDSL() {
     private var children = mutableMapOf<Struct<*>, Transformation>()
 
-    fun <U> sub(what: U, block: StructBuilderDSL<U>.() -> Unit) {
-        val (child, tf) = StructBuilderDSL(what).apply(block).build()
+    infix fun <U> U.asSub(block: StructBuilderDSL<U>.() -> Unit) {
+        val (child, tf) = StructBuilderDSL(this).apply(block).build()
         children[child] = tf
     }
 
-    fun sub(child: Struct<*>, block: RelationRecorderDSL.() -> Unit) {
-        children[child] = RelationRecorderDSL().apply(block).relation
+    infix fun Struct<*>.asSub(block: RelationRecorderDSL.() -> Unit) {
+        children[this] = RelationRecorderDSL().apply(block).relation
     }
 
     private fun build() = Struct(root, *(children.toList().toTypedArray())) to relation
