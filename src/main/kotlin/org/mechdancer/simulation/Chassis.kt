@@ -7,13 +7,14 @@ import org.mechdancer.common.Stamped
 import org.mechdancer.common.Stamped.Companion.stamp
 import org.mechdancer.common.Velocity
 import org.mechdancer.common.Velocity.*
+import org.mechdancer.common.filters.Filter
 import org.mechdancer.geometry.angle.toRad
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
 /** 初始状态为 [origin] 的通用底盘模型 */
-class Chassis(origin: Stamped<Odometry>? = null) {
+class Chassis(origin: Stamped<Odometry>? = null) : Filter<Velocity, Stamped<Odometry>> {
     /** 位姿 */
     var odometry = origin ?: stamp(Odometry())
         private set
@@ -50,11 +51,18 @@ class Chassis(origin: Stamped<Odometry>? = null) {
     }
 
     /** 更新速度 */
-    fun drive(velocity: Velocity, time: Long? = null): Odometry {
+    fun drive(velocity: Velocity, time: Long? = null) = update(velocity, time)
+
+    override fun update(new: Velocity, time: Long?): Stamped<Odometry> {
         val now = time ?: System.currentTimeMillis()
         odometry = Stamped(now, get(now))
-        this.velocity = velocity
-        return odometry.data
+        velocity = new
+        return Stamped(now, odometry.data)
+    }
+
+    override fun clear() {
+        odometry = stamp(Odometry())
+        velocity = Static
     }
 
     private companion object {
