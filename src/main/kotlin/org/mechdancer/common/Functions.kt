@@ -16,3 +16,6 @@ fun Transformation.toPose(): Odometry {
 
 fun Odometry.toTransformation() =
     Transformation.fromPose(p, d)
+
+operator fun Transformation.invoke(pose: Odometry) =
+    Odometry(invoke(pose.p).to2D(), invokeLinear(pose.d.toVector()).to2D().toAngle())

@@ -21,15 +21,20 @@ class Chassis(origin: Stamped<Odometry>? = null) : Filter<Velocity, Stamped<Odom
 
     /** 计算当前位姿 */
     operator fun get(time: Long? = null): Odometry {
-        val dt = ((time ?: System.currentTimeMillis()) - odometry.time) / 1000.0
+        val (t, robotOnOdometry) = odometry
+        val dt = ((time ?: System.currentTimeMillis()) - t) / 1000.0
         require(dt >= 0)
         return when {
             abs(dt) < DoubleEpsilon ->
                 odometry.data
             dt > 0                  -> {
                 when (val copy = velocity) {
-                    is Static -> odometry.data
-                    else      -> (odometry.data.toTransformation() * copy.toDeltaOdometry(dt).toTransformation()).toPose()
+                    is Static -> robotOnOdometry
+                    else      -> {
+                        val robotToOdometry = robotOnOdometry.toTransformation()
+                        val nextToRobot = copy.toDeltaOdometry(dt).toTransformation()
+                        (robotToOdometry * nextToRobot).toPose() // next on odometry
+                    }
                 }
             }
             else                    ->

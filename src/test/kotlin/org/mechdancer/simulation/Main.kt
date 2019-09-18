@@ -1,16 +1,25 @@
 package org.mechdancer.simulation
 
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.function.vector.div
+import org.mechdancer.algebra.function.vector.dot
+import org.mechdancer.algebra.function.vector.plus
+import org.mechdancer.algebra.function.vector.times
+import org.mechdancer.algebra.implement.vector.to2D
+import org.mechdancer.common.Odometry
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.filters.DiscreteDelayer.Companion.delayOn
 import org.mechdancer.common.toPose
-import org.mechdancer.geometry.angle.times
+import org.mechdancer.common.toTransformation
+import org.mechdancer.geometry.angle.rotate
+import org.mechdancer.geometry.angle.toAngle
+import org.mechdancer.geometry.angle.toRad
+import org.mechdancer.geometry.angle.toVector
 import org.mechdancer.simulation.Device.Encoder
 import org.mechdancer.simulation.Device.Locator
-import org.mechdancer.simulation.Encoding.move
-import org.mechdancer.simulation.Encoding.rotate
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 private sealed class Device {
     object Locator : Device()
@@ -46,17 +55,30 @@ fun main() {
     val queue = delayOn(robot.what.get())
     while (true) {
         //  计算机器人位姿增量
-        val current = robot.what.drive(velocity(0.1, 0)).data
+        val current = robot.what.drive(velocity(0.1, 0.5)).data
         val last = queue.update(current)!!.data
-        val (dp, dd) = current minusState last
-        // 计算编码器增量
-        values = values.mapValues { (key, value) ->
-            val pose = encodersOnRobot.getValue(key)
-            value + 2 * rotate(pose, dd * 0.5) + move(pose, vector2DOf(dp.length, 0))
+        val (dp, dd) = current minusState last  // `this robot` on `last robot`
+        // 确定计算方法
+        val calculate = when (val theta = dd.asRadian()) {
+            .0   -> { encoder: Odometry ->
+                encoder.d.toVector() dot dp
+            }
+            else -> { encoder: Odometry ->
+                // 机器人运动的圆弧半径
+                val r = dp.length / sin(theta) / 2
+                val centerOnLast = (dp / 2).let {
+                    it + (it.toAngle() rotate (PI / 2).toRad()).toVector() * r * cos(theta)
+                }
+                val centerOnEncoder = (-encoder.toTransformation())(centerOnLast).to2D()
+                val k = cos((centerOnEncoder.toAngle() rotate (-PI / 2).toRad()).asRadian())
+                k * centerOnEncoder.length * theta
+            }
         }
-
+        // 计算编码器增量
+        values = values.mapValues { (encoder, value) ->
+            value + calculate(encodersOnRobot.getValue(encoder))
+        }
         println(values)
-
         Thread.sleep(100L)
     }
 }

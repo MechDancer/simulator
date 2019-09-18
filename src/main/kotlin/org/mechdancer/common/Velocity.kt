@@ -5,7 +5,6 @@ import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.geometry.angle.rotate
 import org.mechdancer.geometry.angle.toAngle
 import org.mechdancer.geometry.angle.toRad
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -33,21 +32,20 @@ sealed class Velocity {
         val vy: Double,
         val w: Double
     ) : Velocity() {
-        override fun toDeltaOdometry(dt: Double) =
-            if (abs(w) < DoubleEpsilon) {
-                Odometry(vector2DOf(vx * dt, vy * dt), .0.toRad())
-            } else {
-                val v = vector2DOf(vx, vy)
-                val r = v.length / w
+        override fun toDeltaOdometry(dt: Double): Odometry {
+            val v = vector2DOf(vx, vy)
+            return if (w == .0)
+                Odometry(v * dt, 0.toRad())
+            else {
                 val theta = w * dt
+                val r = v.length / w
                 Odometry(vector2DOf(sin(theta), 1 - cos(theta)) * r rotate v.toAngle(),
                          theta.toRad())
             }
+        }
     }
 
     companion object {
-        const val DoubleEpsilon = 5E-15
-
         fun velocity() = Static
 
         fun velocity(v: Number, w: Number) =
