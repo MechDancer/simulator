@@ -5,26 +5,30 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.mechdancer.algebra.implement.matrix.builder.matrix
-import org.mechdancer.simulation.prefabs.RandomDriving
+import org.mechdancer.simulation.prefabs.OneStepTransferRandomDrivingBuilderDSL.Companion.oneStepTransferRandomDriving
 
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
     val chassis = Chassis()
-    val driving = RandomDriving(
-        v = 0.1,
-        w = 0.5,
-        vMatrix = matrix {
+    val driving = oneStepTransferRandomDriving {
+        vx(0.1) {
             row(0.80, 0.20, 0.00)
             row(0.02, 0.80, 0.18)
             row(0.00, 0.20, 0.80)
-        },
-        wMatrix = matrix {
+        }
+
+        vy(0.1) {
+            row(0.80, 0.20, 0.00)
+            row(0.02, 0.80, 0.18)
+            row(0.00, 0.20, 0.80)
+        }
+
+        w(0.5) {
             row(0.90, 0.10, 0.00)
             row(0.05, 0.90, 0.05)
             row(0.00, 0.10, 0.90)
         }
-    )
+    }
 
     produce {
         while (true) {
