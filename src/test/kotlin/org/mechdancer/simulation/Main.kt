@@ -60,10 +60,15 @@ fun main() = runBlocking {
         val last = queue.update(current)!!.data
         val delta = current minusState last
         // 计算编码器增量
+        val save = encodersOnRobot
+            .keys
+            .associateWith { it.value }
         val values = encodersOnRobot
             .onEach { (encoder, pose) -> encoder.update(pose, delta) }
             .keys
-
+        val deltas = encodersOnRobot
+            .keys
+            .associateWith { it.value - save.getValue(it) }
         println("""
             $values
             ------------------------------
@@ -71,7 +76,7 @@ fun main() = runBlocking {
             ${buildInverseEquation().solve()!!.let { Odometry.odometry(it.x, it.y, it.z) }}
             Actual:
             $delta
-            
+
         """.trimIndent())
     }
 }
