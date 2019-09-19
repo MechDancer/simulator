@@ -17,9 +17,9 @@ internal constructor(
     private val vyMatrix: Matrix,
     private val wMatrix: Matrix
 ) {
-    private var vxState = 0
-    private var vyState = 0
-    private var wState = 0
+    private var vxState = 1
+    private var vyState = 1
+    private var wState = 1
 
     fun next(): Omnidirectional {
         // 状态转移

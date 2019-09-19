@@ -14,7 +14,6 @@ import org.mechdancer.algebra.implement.equation.builder.equations
 import org.mechdancer.common.Odometry
 import org.mechdancer.common.filters.DiscreteDelayer.Companion.delayOn
 import org.mechdancer.common.toPose
-import org.mechdancer.simulation.prefabs.OneStepTransferRandomDrivingBuilderDSL.Companion.oneStepTransferRandomDriving
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
 import kotlin.math.cos
@@ -47,28 +46,13 @@ fun main() = runBlocking {
     // 离散延时环节
     val queue = delayOn(robot.what.get())
     produce {
-        oneStepTransferRandomDriving {
-            vx(0.1) {
-                row(0.80, 0.20, 0.00)
-                row(0.02, 0.80, 0.18)
-                row(0.00, 0.20, 0.80)
+        Default.newRandomDriving()
+            .run {
+                while (true) {
+                    send(next())
+                    delay(100L)
+                }
             }
-            vy(0.1) {
-                row(0.80, 0.20, 0.00)
-                row(0.02, 0.80, 0.18)
-                row(0.00, 0.20, 0.80)
-            }
-            w(0.5) {
-                row(0.90, 0.10, 0.00)
-                row(0.05, 0.90, 0.05)
-                row(0.00, 0.10, 0.90)
-            }
-        }.run {
-            while (true) {
-                send(next())
-                delay(100L)
-            }
-        }
     }.consumeEach { v ->
         //  计算机器人位姿增量
         val current = robot.what.drive(v).data
