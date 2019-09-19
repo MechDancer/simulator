@@ -11,6 +11,7 @@ import org.mechdancer.algebra.function.vector.x
 import org.mechdancer.algebra.function.vector.y
 import org.mechdancer.algebra.function.vector.z
 import org.mechdancer.algebra.implement.equation.builder.equations
+import org.mechdancer.algebra.implement.matrix.builder.matrix
 import org.mechdancer.common.Odometry
 import org.mechdancer.common.filters.DiscreteDelayer.Companion.delayOn
 import org.mechdancer.common.toPose
@@ -45,6 +46,7 @@ private val encodersOnRobot =
 fun main() = runBlocking {
     // 离散延时环节
     val queue = delayOn(robot.what.get())
+    val fSum = Odometry()
     produce {
         Default.newRandomDriving()
             .run {
@@ -68,22 +70,41 @@ fun main() = runBlocking {
             .keys
         val deltas = encodersOnRobot
             .keys
-            .associateWith { it.value - save.getValue(it) }
-        println("""
+            .associateWith { it.value - save.getValue(it) }.values
+
+        val fSolve = buildInverseEquation().solve()!!.let { Odometry.odometry(it.x, it.y, it.z) }
+        fSum.plusDelta(fSolve)
+
+        println(
+            """
             $values
             ------------------------------
             Equation Solve:
-            ${buildInverseEquation().solve()!!.let { Odometry.odometry(it.x, it.y, it.z) }}
+            $fSum
             Actual:
-            $delta
+            $current
 
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }
 
+// (e1, e2 ,e3) -> (x, y, w)
 private fun buildInverseEquation() =
     equations {
         encodersOnRobot.forEach { (k, v) ->
-            this[sin(v.d.asRadian()), cos(v.d.asRadian()), v.p.norm()] = k.value
+            this[1 safeDivide sin(v.d.asRadian()), 1 safeDivide cos(v.d.asRadian()), v.p.norm()] = k.value
         }
     }
+
+// (x, y, w) -> (e1, e2 ,e3)
+private val encoderTransformation = matrix {
+    encodersOnRobot.forEach { (_, v) ->
+        row(1 safeDivide sin(v.d.asRadian()), 1 safeDivide cos(v.d.asRadian()), v.p.norm())
+    }
+}
+
+private infix fun Number.safeDivide(other: Number) =
+    if (other.toDouble() == .0)
+        .0
+    else this.toDouble() / other.toDouble()
