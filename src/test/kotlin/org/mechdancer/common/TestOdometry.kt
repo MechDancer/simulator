@@ -34,7 +34,7 @@ class TestOdometry {
         val step3 = step2 plusDelta delta1
         val step4 = step3 plusDelta delta2 minusState step3
         assert(step4 == delta2) {
-            "里程计标记错误：$step4 ≠ $step2"
+            "里程计标记错误：$step4 ≠ $delta2"
         }
     }
 }
