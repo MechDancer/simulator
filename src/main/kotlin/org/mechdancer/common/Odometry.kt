@@ -34,7 +34,7 @@ data class Odometry(
         Odometry((p - mark.p).rotate(-mark.d),
                  d.rotate(-mark.d))
 
-    override fun toString(): String = "(${p.x}, ${p.y})($d)"
+    override fun toString() = "(${p.x}, ${p.y})($d)"
 
     companion object {
         fun odometry(x: Number, y: Number, theta: Number = 0) =
