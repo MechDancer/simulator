@@ -3,7 +3,6 @@ package org.mechdancer.common
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.implement.vector.Vector2D
-import org.mechdancer.algebra.implement.vector.listVectorOf
 import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.algebra.implement.vector.vector2DOfZero
 import org.mechdancer.geometry.angle.Angle
@@ -36,7 +35,7 @@ data class Odometry(
     infix fun minusState(mark: Odometry) =
         (-mark.toTransformation())(this)
 
-    override fun toString(): String = listVectorOf(p.x, p.y, d.asRadian()).toString()
+    override fun toString(): String = "(${p.x}, ${p.y})($d)"
 
     companion object {
         fun odometry(x: Number, y: Number, theta: Number = 0) =

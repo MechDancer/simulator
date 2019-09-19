@@ -28,7 +28,9 @@ allprojects {
         implementation(fileTree("libs"))
         // 使用示例中采用协程
         testImplementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "+")
-
+        // 支持网络工具
+        testImplementation("org.slf4j", "slf4j-api", "+")
+        testImplementation(kotlin("reflect"))
         testImplementation("junit", "junit", "+")
         testImplementation(kotlin("test-junit"))
     }
