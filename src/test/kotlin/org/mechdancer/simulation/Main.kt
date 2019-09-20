@@ -5,8 +5,8 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.mechdancer.common.filters.DiscreteDelayer.Companion.delayOn
-import org.mechdancer.common.toPose
+import org.mechdancer.common.filters.Differential
+import org.mechdancer.common.toPoseimport org.mechdancer.simulation.Default.remote
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
 
@@ -29,13 +29,13 @@ private val robot = struct(Chassis()) {
 // 编码器在机器人上的位姿
 private val encodersOnRobot =
     robot.devices
-        .mapNotNull { (device, tf) -> (device as? Encoder<*>)?.to(tf.toPose()) }
+        .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
         .toMap()
 
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
-    // 离散延时环节
-    val queue = delayOn(robot.what.get())
+    // 离散差分环节
+    val differential = Differential(robot.what.get()) { _, old, new -> new minusState old }
     produce {
         Default.newRandomDriving()
             .run {
@@ -46,13 +46,16 @@ fun main() = runBlocking {
             }
     }.consumeEach { v ->
         //  计算机器人位姿增量
-        val current = robot.what.drive(v).data
-            .also { pose -> Default.remote.paint("pose", pose.p.x, pose.p.y, pose.d.asRadian()) }
-        val last = queue.update(current)!!.data
-        val delta = current minusState last
-        // 计算编码器增量
-        encodersOnRobot
-            .onEach { (encoder, pose) -> encoder.update(pose, delta) }
+        robot.what.drive(v)
+            .data
+            .also { pose -> remote.paint("pose", pose.p.x, pose.p.y, pose.d.asRadian()) }
+            .let { differential.update(it) }
+            .data
+            .let { delta->
+                // 计算编码器增量
+                encodersOnRobot
+                    .onEach { (encoder, pose) -> encoder.update(pose, delta) }
+            }
             .keys
             .also(::println)
     }

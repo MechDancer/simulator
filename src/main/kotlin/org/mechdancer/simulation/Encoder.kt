@@ -15,12 +15,12 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Encoder<T>(val key: T) {
+class Encoder(val key: Any) {
     var value = .0
         private set
 
     override fun equals(other: Any?) =
-        other is Encoder<*> && other.key == key
+        other is Encoder && other.key == key
 
     override fun hashCode() =
         key.hashCode()
