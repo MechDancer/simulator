@@ -20,36 +20,38 @@ import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.cos
 import kotlin.math.sin
 
-// 机器人机械结构
-private val robot = struct(Chassis(Stamped(0, Odometry()))) {
-    Encoder("left") asSub { pose(0, +0.2) }
-    Encoder("right") asSub { pose(0, -0.2) }
-}
-
-// 编码器在机器人上的位姿
-private val encodersOnRobot =
-    robot.devices
-        .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
-        .toMap()
-
+// 差动里程计仿真实验
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
+    // 仿真时间
     var time = 0L
+    // 机器人机械结构
+    val robot = struct(Chassis(Stamped(time, Odometry()))) {
+        Encoder("left") asSub { pose(0, +0.2) }
+        Encoder("right") asSub { pose(0, -0.2) }
+    }
+    // 编码器在机器人上的位姿
+    val encodersOnRobot =
+        robot.devices
+            .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
+            .toMap()
     // 离散差分环节
     val differential = Differential(robot.what.get(), time) { _, old, new -> new minusState old }
     // 里程计缓存
     var odometry = Odometry()
     val lDiff = Differential(.0, time) { _, old, new -> new - old }
     val rDiff = Differential(.0, time) { _, old, new -> new - old }
+    // 仿真
     produce {
+        // 产生随机行驶指令
         newNonOmniRandomDriving().run {
             while (true) {
                 send(next())
+                time += 100
                 delay(1L)
             }
         }
     }.consumeEach { v ->
-        time += 100
         //  计算机器人位姿增量
         val current = robot.what.drive(v, time).data
         val delta = differential.update(current, time).data
@@ -66,7 +68,7 @@ fun main() = runBlocking {
         }
         // 显示
         println("time = ${time / 1000.0}, error = ${(current.p - odometry.p).norm()}")
-        remote.paint("pose", current.p.x, current.p.y, current.d.asRadian())
-        remote.paint("odometry", odometry.p.x, odometry.p.y, odometry.d.asRadian())
+        remote.paintPose("机器人", current)
+        remote.paintPose("里程计", odometry)
     }
 }

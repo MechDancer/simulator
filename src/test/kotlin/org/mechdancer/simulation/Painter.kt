@@ -4,6 +4,7 @@ import org.mechdancer.algebra.core.Vector
 import org.mechdancer.algebra.function.vector.x
 import org.mechdancer.algebra.function.vector.y
 import org.mechdancer.algebra.function.vector.z
+import org.mechdancer.common.Odometry
 import org.mechdancer.remote.presets.RemoteHub
 import org.mechdancer.remote.protocol.writeEnd
 import org.mechdancer.remote.resources.Command
@@ -94,6 +95,21 @@ fun RemoteHub.paint(
         writeDouble(x)
         writeDouble(y)
         writeDouble(theta)
+    }
+}
+
+/**
+ * 画位姿信号
+ */
+fun RemoteHub.paintPose(
+    topic: String,
+    pose: Odometry
+) = paint(topic) {
+    DataOutputStream(this).apply {
+        writeByte(3)
+        writeDouble(pose.p.x)
+        writeDouble(pose.p.y)
+        writeDouble(pose.d.asRadian())
     }
 }
 
