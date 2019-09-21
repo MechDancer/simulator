@@ -25,7 +25,10 @@ allprojects {
         // 自动依赖 kotlin 标准库
         implementation(kotlin("stdlib-jdk8"))
         // 自动依赖本地库文件
-        implementation(fileTree("libs"))
+//        implementation(fileTree("libs"))
+        implementation("org.mechdancer", "linearalgebra", "0.2.5-dev-3")
+        implementation("org.mechdancer", "dependency", "0.1.0-rc-3")
+        implementation("org.mechdancer", "remote", "0.2.1-dev-13")
         // 使用示例中采用协程
         testImplementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "+")
         // 支持网络工具
