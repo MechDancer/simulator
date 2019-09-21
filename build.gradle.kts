@@ -24,16 +24,16 @@ allprojects {
     dependencies {
         // 自动依赖 kotlin 标准库
         implementation(kotlin("stdlib-jdk8"))
-        // 自动依赖本地库文件
-//        implementation(fileTree("libs"))
+        // 线性代数
         implementation("org.mechdancer", "linearalgebra", "0.2.5-dev-3")
-        implementation("org.mechdancer", "dependency", "0.1.0-rc-3")
-        implementation("org.mechdancer", "remote", "0.2.1-dev-13")
         // 使用示例中采用协程
         testImplementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "+")
         // 支持网络工具
+        testImplementation("org.mechdancer", "dependency", "0.1.0-rc-3")
+        testImplementation("org.mechdancer", "remote", "0.2.1-dev-13")
         testImplementation("org.slf4j", "slf4j-api", "+")
         testImplementation(kotlin("reflect"))
+        // 单元测试
         testImplementation("junit", "junit", "+")
         testImplementation(kotlin("test-junit"))
     }
