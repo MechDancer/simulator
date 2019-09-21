@@ -1,14 +1,18 @@
 package org.mechdancer.common.filters
 
 import org.mechdancer.common.Stamped
-import org.mechdancer.common.filters.DiscreteDelayer.Companion.delayOn
 
 /** 差分器 */
 class Differential<T : Any, R>(
     private val init: T,
-    private val minus: (Long, T, T) -> R
+    private val t0: Long? = null,
+    private val minus: (dt: Long, old: T, new: T) -> R
 ) : Filter<T, Stamped<R>> {
-    private val delayer = delayOn(init)
+    private val delayer = DiscreteDelayer<T>(1)
+
+    init {
+        clear()
+    }
 
     override fun update(new: T, time: Long?): Stamped<R> {
         val t1 = time ?: System.currentTimeMillis()
@@ -17,6 +21,6 @@ class Differential<T : Any, R>(
     }
 
     override fun clear() {
-        delayer.update(init)
+        delayer.update(init, t0)
     }
 }

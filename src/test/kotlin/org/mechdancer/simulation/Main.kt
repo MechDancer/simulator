@@ -6,7 +6,9 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.common.filters.Differential
-import org.mechdancer.common.toPoseimport org.mechdancer.simulation.Default.remote
+import org.mechdancer.common.toPose
+import org.mechdancer.simulation.Default.newOmniRandomDriving
+import org.mechdancer.simulation.Default.remote
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
 
@@ -37,13 +39,12 @@ fun main() = runBlocking {
     // 离散差分环节
     val differential = Differential(robot.what.get()) { _, old, new -> new minusState old }
     produce {
-        Default.newRandomDriving()
-            .run {
-                while (true) {
-                    send(next())
-                    delay(100L)
-                }
+        newOmniRandomDriving().run {
+            while (true) {
+                send(next())
+                delay(100L)
             }
+        }
     }.consumeEach { v ->
         //  计算机器人位姿增量
         robot.what.drive(v)
@@ -51,7 +52,7 @@ fun main() = runBlocking {
             .also { pose -> remote.paint("pose", pose.p.x, pose.p.y, pose.d.asRadian()) }
             .let { differential.update(it) }
             .data
-            .let { delta->
+            .let { delta ->
                 // 计算编码器增量
                 encodersOnRobot
                     .onEach { (encoder, pose) -> encoder.update(pose, delta) }

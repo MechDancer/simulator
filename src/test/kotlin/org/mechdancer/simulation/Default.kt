@@ -18,7 +18,7 @@ object Default {
     // -  x x x
     // 0  x x x
     // +  x x x
-    fun newRandomDriving() =
+    fun newOmniRandomDriving() =
         oneStepTransferRandomDriving {
             vx(0.1) {
                 row(0.80, 0.20, 0.00)
@@ -33,6 +33,20 @@ object Default {
             w(0.5) {
                 row(0.90, 0.10, 0.00)
                 row(0.05, 0.90, 0.05)
+                row(0.00, 0.10, 0.90)
+            }
+        }
+
+    fun newNonOmniRandomDriving() =
+        oneStepTransferRandomDriving {
+            vx(0.1) {
+                row(0.99, 0.01, 0.00)
+                row(0.00, 0.96, 0.04)
+                row(0.00, 0.01, 0.99)
+            }
+            w(0.5) {
+                row(0.90, 0.10, 0.00)
+                row(0.02, 0.96, 0.02)
                 row(0.00, 0.10, 0.90)
             }
         }

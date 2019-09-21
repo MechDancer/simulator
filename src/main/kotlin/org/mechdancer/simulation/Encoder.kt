@@ -32,16 +32,20 @@ class Encoder(val key: Any) {
         value += when (val theta = d.asRadian()) {
             .0   -> encoderOnRobot.d.toVector() dot p
             else -> {
+                val halfP = p / 2
                 // 机器人运动的圆弧半径
-                val r = p.length / sin(theta) / 2
-                val centerOnLast = (p / 2).let {
-                    it + (it.toAngle() rotate (PI / 2).toRad()).toVector() * r * cos(theta)
-                }
-                val centerOnEncoder = (-encoderOnRobot.toTransformation())(centerOnLast).to2D()
-                val k = cos((centerOnEncoder.toAngle() rotate (-PI / 2).toRad()).asRadian())
+                val r = halfP.length / sin(theta / 2)
+                val centerOnRobot = halfP + (p.toAngle() rotate positive90).toVector() * r * cos(theta)
+                val centerOnEncoder = (-encoderOnRobot.toTransformation())(centerOnRobot).to2D()
+                val k = cos((centerOnEncoder.toAngle() rotate negative90).asRadian())
                 k * centerOnEncoder.length * theta
             }
         }
         return value
+    }
+
+    private companion object {
+        val positive90 = (+PI / 2).toRad()
+        val negative90 = (-PI / 2).toRad()
     }
 }
