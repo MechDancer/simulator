@@ -73,7 +73,7 @@ fun main() = runBlocking {
     val odometry = DifferentialOdometry(0.4, t0)
     // 仿真
     val random = newNonOmniRandomDriving()
-    speedSimulation(this, t0, 10L) {
+    speedSimulation(this) {
         random.next()
     }.consumeEach { (t, v) ->
         //  计算机器人位姿增量

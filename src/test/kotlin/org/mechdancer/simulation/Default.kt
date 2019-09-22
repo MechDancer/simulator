@@ -26,54 +26,54 @@ object Default {
     fun newOmniRandomDriving() =
         oneStepTransferRandomDriving {
             vx(0.1) {
-                row(0.80, 0.20, 0.00)
-                row(0.02, 0.80, 0.18)
-                row(0.00, 0.20, 0.80)
+                row(-1, 0.20, 0.00)
+                row(0.02, -1, 0.18)
+                row(0.00, 0.20, -1)
             }
             vy(0.1) {
-                row(0.80, 0.20, 0.00)
-                row(0.02, 0.80, 0.18)
-                row(0.00, 0.20, 0.80)
+                row(-1, 0.20, 0.00)
+                row(0.02, -1, 0.18)
+                row(0.00, 0.20, -1)
             }
             w(0.5) {
-                row(0.90, 0.10, 0.00)
-                row(0.05, 0.90, 0.05)
-                row(0.00, 0.10, 0.90)
+                row(-1, 0.10, 0.00)
+                row(0.05, -1, 0.05)
+                row(0.00, 0.10, -1)
             }
         }
 
     fun newNonOmniRandomDriving() =
         oneStepTransferRandomDriving {
             vx(0.1) {
-                row(0.99, 0.01, 0.00)
-                row(0.00, 0.96, 0.04)
-                row(0.00, 0.01, 0.99)
+                row(-1, .99, .00)
+                row(.00, -1, .02)
+                row(.00, .01, -1)
             }
             w(0.5) {
-                row(0.90, 0.10, 0.00)
-                row(0.02, 0.96, 0.02)
-                row(0.00, 0.10, 0.90)
+                row(-1, .01, .01)
+                row(.01, -1, .01)
+                row(.01, .01, -1)
             }
         }
+
+    private const val dt = 20L
 
     // 倍速仿真
     @ExperimentalCoroutinesApi
     fun <T> speedSimulation(
         scope: CoroutineScope,
-        t0: Long,
-        speed: Long,
+        t0: Long = 0L,
+        speed: Long = 1L,
         block: () -> T
     ) =
         scope.produce {
             // 仿真时间
             var time = t0
             while (true) {
-                val value = block()
-                for (i in 0 until speed) {
-                    time += speed
-                    this.send(Stamped(time, value))
-                    delay(1L)
-                }
+                time += dt * speed
+                repeat(speed.toInt() - 1) { block() }
+                send(Stamped(time, block()))
+                delay(dt)
             }
         }
 }
