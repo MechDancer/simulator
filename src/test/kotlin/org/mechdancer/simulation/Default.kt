@@ -58,7 +58,7 @@ object Default {
 
     // 倍速仿真
     @ExperimentalCoroutinesApi
-    suspend fun <T> speedSimulation(
+    fun <T> speedSimulation(
         scope: CoroutineScope,
         t0: Long,
         speed: Long,
