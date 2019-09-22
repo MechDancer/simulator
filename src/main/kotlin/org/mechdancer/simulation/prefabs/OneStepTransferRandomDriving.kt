@@ -2,6 +2,7 @@ package org.mechdancer.simulation.prefabs
 
 import org.mechdancer.algebra.core.Matrix
 import org.mechdancer.algebra.function.matrix.dim
+import org.mechdancer.algebra.function.matrix.power
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.Velocity.Omnidirectional
 import kotlin.math.sign
@@ -20,6 +21,15 @@ internal constructor(
     private var vxState = 1
     private var vyState = 1
     private var wState = 1
+
+    infix fun power(k: Int): OneStepTransferRandomDriving {
+        require(k > 0)
+        return OneStepTransferRandomDriving(
+            vx, vy, w,
+            vxMatrix power k,
+            vyMatrix power k,
+            wMatrix power k)
+    }
 
     fun next(): Omnidirectional {
         // 状态转移

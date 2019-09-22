@@ -56,14 +56,14 @@ object Default {
             }
         }
 
-    private const val dt = 20L
+    private const val dt = 5L
 
     // 倍速仿真
     @ExperimentalCoroutinesApi
     fun <T> speedSimulation(
         scope: CoroutineScope,
-        t0: Long = 0L,
-        speed: Long = 1L,
+        t0: Long = 0,
+        speed: Int = 1,
         block: () -> T
     ) =
         scope.produce {
@@ -71,7 +71,6 @@ object Default {
             var time = t0
             while (true) {
                 time += dt * speed
-                repeat(speed.toInt() - 1) { block() }
                 send(Stamped(time, block()))
                 delay(dt)
             }

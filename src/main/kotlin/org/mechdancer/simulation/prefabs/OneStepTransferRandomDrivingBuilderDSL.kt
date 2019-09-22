@@ -11,6 +11,7 @@ import org.mechdancer.algebra.implement.matrix.builder.toArrayMatrix
 
 class OneStepTransferRandomDrivingBuilderDSL
 private constructor() {
+    var steps = 1
     var vx = .1
     var vy = .0
     var w = .5
@@ -42,14 +43,15 @@ private constructor() {
     companion object {
         fun oneStepTransferRandomDriving(
             block: OneStepTransferRandomDrivingBuilderDSL.() -> Unit = {}
-        ) = OneStepTransferRandomDrivingBuilderDSL()
-            .apply(block)
-            .apply {
-                require(vx >= 0)
-                require(vy >= 0)
-                require(w >= 0)
-            }.run {
-                OneStepTransferRandomDriving(vx, vy, w, vxMatrix, vyMatrix, wMatrix)
-            }
+        ) =
+            OneStepTransferRandomDrivingBuilderDSL()
+                .apply(block)
+                .apply {
+                    require(vx >= 0)
+                    require(vy >= 0)
+                    require(w >= 0)
+                }.run {
+                    OneStepTransferRandomDriving(vx, vy, w, vxMatrix, vyMatrix, wMatrix) power steps
+                }
     }
 }
