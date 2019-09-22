@@ -17,18 +17,18 @@ private constructor() {
     var vyMatrix: Matrix = arrayMatrixOfUnit(3)
     var wMatrix: Matrix = arrayMatrixOfUnit(3)
 
-    fun vx(value: Double, block: MatrixBuilder.() -> Unit) {
-        vx = value
+    fun vx(value: Number, block: MatrixBuilder.() -> Unit) {
+        vx = value.toDouble()
         vxMatrix = matrix(Immutable, block)
     }
 
-    fun vy(value: Double, block: MatrixBuilder.() -> Unit) {
-        vy = value
+    fun vy(value: Number, block: MatrixBuilder.() -> Unit) {
+        vy = value.toDouble()
         vyMatrix = matrix(Immutable, block)
     }
 
-    fun w(value: Double, block: MatrixBuilder.() -> Unit) {
-        w = value
+    fun w(value: Number, block: MatrixBuilder.() -> Unit) {
+        w = value.toDouble()
         wMatrix = matrix(Immutable, block)
     }
 

@@ -19,6 +19,9 @@ class Encoder(val key: Any) {
     var value = .0
         private set
 
+    operator fun component1() = key
+    operator fun component2() = value
+
     override fun equals(other: Any?) =
         other is Encoder && other.key == key
 
