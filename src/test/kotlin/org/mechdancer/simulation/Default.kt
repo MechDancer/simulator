@@ -10,6 +10,7 @@ import org.mechdancer.remote.presets.remoteHub
 import org.mechdancer.remote.resources.MulticastSockets
 import org.mechdancer.remote.resources.Networks
 import org.mechdancer.simulation.prefabs.OneStepTransferRandomDrivingBuilderDSL.Companion.oneStepTransferRandomDriving
+import kotlin.system.measureTimeMillis
 
 object Default {
     val remote by lazy {
@@ -56,23 +57,36 @@ object Default {
             }
         }
 
-    private const val dt = 5L
-
     // 倍速仿真
     @ExperimentalCoroutinesApi
     fun <T> speedSimulation(
         scope: CoroutineScope,
         t0: Long = 0,
+        dt: Long = 5L,
         speed: Int = 1,
         block: () -> T
     ) =
-        scope.produce {
-            // 仿真时间
-            var time = t0
-            while (true) {
-                time += dt * speed
-                send(Stamped(time, block()))
-                delay(dt)
+        when {
+            speed > 0 -> scope.produce {
+                // 仿真时间
+                var time = t0
+                while (true) {
+                    val cost = measureTimeMillis {
+                        time += dt * speed
+                        send(Stamped(time, block()))
+                    }
+                    if (dt > cost) delay(dt - cost)
+                }
             }
+            speed < 0 -> scope.produce {
+                // 仿真时间
+                var time = t0
+                while (true) {
+                    time += dt
+                    send(Stamped(time, block()))
+                    delay(dt * -speed)
+                }
+            }
+            else      -> throw IllegalArgumentException("speed cannot be zero")
         }
 }
