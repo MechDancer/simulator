@@ -1,22 +1,43 @@
 package org.mechdancer.simulation
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.delay
 import org.mechdancer.common.Stamped
+import org.mechdancer.common.Velocity
+import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.dependency.must
+import org.mechdancer.remote.modules.multicast.multicastListener
 import org.mechdancer.remote.presets.remoteHub
+import org.mechdancer.remote.protocol.SimpleInputStream
 import org.mechdancer.remote.resources.MulticastSockets
 import org.mechdancer.remote.resources.Networks
 import org.mechdancer.simulation.prefabs.OneStepTransferRandomDrivingBuilderDSL.Companion.oneStepTransferRandomDriving
+import java.io.DataInputStream
+import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
 
 object Default {
+    private val commands_ = Channel<NonOmnidirectional>(Channel.CONFLATED)
+    val commands: ReceiveChannel<NonOmnidirectional> get() = commands_
+
     val remote by lazy {
-        remoteHub("simulator").apply {
+        remoteHub("simulator") {
+            inAddition {
+                multicastListener { _, _, payload ->
+                    if (payload.size == 16)
+                        GlobalScope.launch {
+                            val stream = DataInputStream(SimpleInputStream(payload))
+                            @Suppress("BlockingMethodInNonBlockingContext")
+                            commands_.send(Velocity.velocity(stream.readDouble(), stream.readDouble()))
+                        }
+                }
+            }
+        }.apply {
             openAllNetworks()
             println("simulator open ${components.must<Networks>().view.size} networks on ${components.must<MulticastSockets>().address}")
+            thread(isDaemon = true) { while (true) invoke() }
         }
     }
 

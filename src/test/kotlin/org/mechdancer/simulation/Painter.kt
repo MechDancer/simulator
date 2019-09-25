@@ -189,3 +189,21 @@ fun RemoteHub.paintVectors(
         }
     }
 }
+
+/**
+ * 画单帧位姿信号
+ */
+fun RemoteHub.paintPoses(
+    topic: String,
+    list: List<Odometry>
+) = paint(topic) {
+    DataOutputStream(this).apply {
+        writeByte(0)
+        writeByte(ThreeDouble.value)
+        for ((p, d) in list) {
+            writeDouble(p.x)
+            writeDouble(p.y)
+            writeDouble(d.asRadian())
+        }
+    }
+}
