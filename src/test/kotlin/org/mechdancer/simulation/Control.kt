@@ -18,6 +18,7 @@ import org.mechdancer.common.toTransformation
 import org.mechdancer.simulation.Default.commands
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.simulation.Default.speedSimulation
+import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -30,7 +31,7 @@ private fun Iterable<Vector2D>.put(pose: Odometry) =
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
     val buffer = AtomicReference<NonOmnidirectional>(velocity(0, 0))
-    val robot = Chassis(Stamped(0, Odometry()))
+    val robot = struct(Chassis(Stamped(0, Odometry())))
     val chassis = shape(vector2DOf(+.2, +.1),
                         vector2DOf(+.1, +.2),
                         vector2DOf(+.1, +.25),
@@ -53,7 +54,7 @@ fun main() = runBlocking {
     launch { for (command in commands) buffer.set(velocity(0.1 * command.v, 0.5 * command.w)) }
     speedSimulation(this) { buffer.get() }
         .consumeEach { (_, v) ->
-            val (_, pose) = robot.drive(v)
+            val (_, pose) = robot.what.drive(v)
             val odometryToRobot = -pose.toTransformation()
             if (path.lastOrNull()?.takeIf { (it.p - pose.p).norm() < 0.05 } == null) {
                 path.offer(pose)
@@ -62,6 +63,6 @@ fun main() = runBlocking {
 
             remote.paintVectors("机器人", chassis)
             remote.paintVectors("障碍物", block.map(odometryToRobot::invoke))
-            remote.paintPoses("路径", path.map { odometryToRobot(it) })
+            remote.paintPoses("路径", path.map { odometryToRobot.invoke(it) })
         }
 }

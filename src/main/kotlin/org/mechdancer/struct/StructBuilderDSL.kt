@@ -20,7 +20,7 @@ class StructBuilderDSL<T> private constructor(private val root: T) : RelationRec
     private fun build() = Struct(root, *(children.toList().toTypedArray())) to relation
 
     companion object {
-        fun <T> struct(what: T, block: StructBuilderDSL<T>.() -> Unit) =
+        fun <T> struct(what: T, block: StructBuilderDSL<T>.() -> Unit = {}) =
             StructBuilderDSL(what).apply(block).build().first
     }
 }
