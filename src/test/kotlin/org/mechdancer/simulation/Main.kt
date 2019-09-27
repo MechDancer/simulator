@@ -11,6 +11,8 @@ import org.mechdancer.simulation.Default.newOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 // 机器人机械结构
 private val robot = struct(Chassis()) {
@@ -61,3 +63,20 @@ fun main() = runBlocking {
             .also(::println)
     }
 }
+
+
+fun x(e0y: Double, e90x: Double, v0: Double, v90: Double, v45: Double) =
+    (2.0 * (2 * e90x.pow(2) + e0y * (-2 * e0y * (v90 - sqrt(2.0) * v45)) + v90 * (v0 + v90) - sqrt(2.0) * v45) +
+            e90x * (v0 * (v0 + v90) - sqrt(2.0) * (2 * v0 + v90) * v45 + 2 * v45.pow(2) - e0y * (v0 - v90 + sqrt(2.0) * v45))) /
+            (4 * (e90x - e0y).pow(2) + v0.pow(2) + v90.pow(2) - 2 * sqrt(2.0) * v90 * v45 + 2 * v45.pow(2))
+
+fun y(e0y: Double, e90x: Double, v0: Double, v90: Double, v45: Double) =
+    (2 * (e90x * (-2 * e0y + v0) * v90 - 2 * e90x.pow(2) * (v0 - sqrt(2.0) * v45) + e90x * (2 * e0y + v0) * (v0 - sqrt(
+        2.0
+    ) * v45) +
+            e0y * (v90 * (2 * e0y + v0 + v90) - sqrt(2.0) * (v0 + 2 * v90) * v45 + 2 * v45.pow(2)))) /
+            (4 * (e90x - e0y).pow(2) + v0.pow(2) + v90.pow(2) - 2 * sqrt(2.0) * v90 * v45 + 2 * v45.pow(2) + 2 * v0 * (v90 - sqrt(
+                2.0
+            ) * v45))
+
+fun theta(e0y: Double, e90x: Double, v0: Double, v90: Double, v45: Double) = (v0 + v90 - sqrt(2.0) * v45) / (e90x - e0y)
