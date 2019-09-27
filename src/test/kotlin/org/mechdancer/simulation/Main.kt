@@ -17,17 +17,14 @@ import kotlin.math.sqrt
 
 // 机器人机械结构
 private val robot = struct(Chassis()) {
-    "定位模块" asSub {
-        pose(0.31, 0)
-        Encoder(0) asSub {
-            pose(0, +.2, 0)
-        }
-        Encoder(1) asSub {
-            pose(0, -.2, PI / 2)
-        }
-        Encoder(2) asSub {
-            pose(0, 0, PI / 4)
-        }
+    Encoder(0) asSub {
+        pose(0, +.2, 0)
+    }
+    Encoder(1) asSub {
+        pose(0, -.2, PI / 2)
+    }
+    Encoder(2) asSub {
+        pose(0, 0, PI / 4)
     }
 }
 
