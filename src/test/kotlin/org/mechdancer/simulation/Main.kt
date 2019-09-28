@@ -105,6 +105,7 @@ fun main() = runBlocking {
                         }
                     }.solve()!!
                 pose = pose plusDelta Odometry.odometry(x, y, theta)
+                remote.paintPose("里程计", pose)
 //              println("actual = $actual, pose = $pose")
                 println("error = ${(actual.p - pose.p).norm()}")
             }
