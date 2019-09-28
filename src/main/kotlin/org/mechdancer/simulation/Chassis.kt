@@ -1,7 +1,9 @@
 package org.mechdancer.simulation
 
-import org.mechdancer.common.*
+import org.mechdancer.common.Odometry
+import org.mechdancer.common.Stamped
 import org.mechdancer.common.Stamped.Companion.stamp
+import org.mechdancer.common.Velocity
 import org.mechdancer.common.Velocity.Static
 import org.mechdancer.common.filters.Filter
 import kotlin.math.abs
@@ -30,11 +32,7 @@ class Chassis(origin: Stamped<Odometry>? = null) : Filter<Velocity, Stamped<Odom
             dt > 0                  -> {
                 when (val copy = velocity) {
                     is Static -> robotOnOdometry
-                    else      -> {
-                        val robotToOdometry = robotOnOdometry.toTransformation()
-                        val nextToRobot = copy.toDeltaOdometry(dt).toTransformation()
-                        (robotToOdometry * nextToRobot).toPose() // next on odometry
-                    }
+                    else      -> robotOnOdometry plusDelta copy.toDeltaOdometry(dt)
                 }
             }
             else                    ->

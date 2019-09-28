@@ -3,17 +3,24 @@ package org.mechdancer.simulation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
+import org.mechdancer.algebra.doubleEquals
+import org.mechdancer.algebra.function.equation.solve
+import org.mechdancer.algebra.function.matrix.inverse
+import org.mechdancer.algebra.function.matrix.times
+import org.mechdancer.algebra.function.vector.*
+import org.mechdancer.algebra.implement.equation.builder.equations
+import org.mechdancer.algebra.implement.matrix.builder.matrix
+import org.mechdancer.algebra.implement.vector.listVectorOf
 import org.mechdancer.common.Odometry
-import org.mechdancer.common.Odometry.Companion.odometry
 import org.mechdancer.common.filters.Differential
 import org.mechdancer.common.toPose
+import org.mechdancer.geometry.angle.toVector
 import org.mechdancer.simulation.Default.newOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.simulation.Default.speedSimulation
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.math.PI
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.tan
 
 // 机器人机械结构
 private val robot = struct(Chassis()) {
@@ -34,6 +41,28 @@ private val encodersOnRobot =
         .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
         .toMap()
 
+private val solve =
+    encodersOnRobot
+        .toList()
+        .run {
+            listOf(single { it.first.key == 0 }.second,
+                   single { it.first.key == 1 }.second,
+                   single { it.first.key == 2 }.second)
+        }.map { (p, d) ->
+            val (x, y) = p
+            val (cos, sin) = d.toVector()
+            Triple(-sin, cos, sin * x - cos * y)
+        }.let { (a, b, c) ->
+            val (a1, a2, a3) = a
+            val (b1, b2, b3) = b
+            val (c1, c2, c3) = c
+            matrix {
+                row(a1, a2, a3)
+                row(b1, b2, b3)
+                row(c1, c2, c3)
+            }
+        }.inverse()
+
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
     // 离散差分环节
@@ -41,6 +70,7 @@ fun main() = runBlocking {
     val dValue = List(3) { Differential(.0) { _, old, new -> new - old } }
     val random = newOmniRandomDriving()
     var pose = Odometry()
+    println(solve)
     speedSimulation(this) {
         random.next()
     }.consumeEach { (_, v) ->
@@ -58,30 +88,35 @@ fun main() = runBlocking {
             .keys
             .let { set ->
                 val v0 = dValue[0].update(set.single { it.key == 0 }.value).data
-                val v90 = dValue[1].update(set.single { it.key == 1 }.value).data
-                val v45 = dValue[2].update(set.single { it.key == 2 }.value).data
-                val dp = odometry(
-                    x(+.2, .0, v0, v90, v45),
-                    y(+.2, .0, v0, v90, v45),
-                    theta(+.2, .0, v0, v90, v45))
-                pose = pose plusDelta dp
-                println("actual = $actual, pose = $pose")
+                val v1 = dValue[1].update(set.single { it.key == 1 }.value).data
+                val v2 = dValue[2].update(set.single { it.key == 2 }.value).data
+                val (u1, u2, theta) = solve * listVectorOf(v0, v1, v2)
+                val (x, y) = if (doubleEquals(theta, .0)) {
+                    val (t0, t1, t2) = encodersOnRobot
+                        .toList()
+                        .run {
+                            listOf(single { it.first.key == 0 }.second.d,
+                                   single { it.first.key == 1 }.second.d,
+                                   single { it.first.key == 2 }.second.d)
+                        }
+                    val (cos0, sin0) = t0.toVector()
+                    val (cos1, sin1) = t1.toVector()
+                    val (cos2, sin2) = t2.toVector()
+                    equations {
+                        this[cos0, sin0] = v0
+                        this[cos1, sin1] = v1
+                        this[cos2, sin2] = v2
+                    }.solve()!!
+                } else {
+                    val tan = 1 / tan(theta / 2)
+                    equations {
+                        this[1, -tan] = 2 * u1 / theta
+                        this[+tan, 1] = 2 * u2 / theta
+                    }.solve()!!
+                }
+                pose = pose plusDelta Odometry.odometry(x, y, theta)
+//              println("actual = $actual, pose = $pose")
+                println("error = ${(actual.p - pose.p).norm()}")
             }
     }
 }
-
-fun x(e0y: Double, e90x: Double, v0: Double, v90: Double, v45: Double) =
-    (2.0 * (2 * e90x.pow(2) + e0y * (-2 * e0y * (v90 - sqrt(2.0) * v45)) + v90 * (v0 + v90) - sqrt(2.0) * v45) +
-     e90x * (v0 * (v0 + v90) - sqrt(2.0) * (2 * v0 + v90) * v45 + 2 * v45.pow(2) - e0y * (v0 - v90 + sqrt(2.0) * v45))) /
-    (4 * (e90x - e0y).pow(2) + v0.pow(2) + v90.pow(2) - 2 * sqrt(2.0) * v90 * v45 + 2 * v45.pow(2))
-
-fun y(e0y: Double, e90x: Double, v0: Double, v90: Double, v45: Double) =
-    (2 * (e90x * (-2 * e0y + v0) * v90 - 2 * e90x.pow(2) * (v0 - sqrt(2.0) * v45) + e90x * (2 * e0y + v0) * (v0 - sqrt(
-        2.0
-    ) * v45) +
-          e0y * (v90 * (2 * e0y + v0 + v90) - sqrt(2.0) * (v0 + 2 * v90) * v45 + 2 * v45.pow(2)))) /
-    (4 * (e90x - e0y).pow(2) + v0.pow(2) + v90.pow(2) - 2 * sqrt(2.0) * v90 * v45 + 2 * v45.pow(2) + 2 * v0 * (v90 - sqrt(
-        2.0
-    ) * v45))
-
-fun theta(e0y: Double, e90x: Double, v0: Double, v90: Double, v45: Double) = (v0 + v90 - sqrt(2.0) * v45) / (e90x - e0y)
