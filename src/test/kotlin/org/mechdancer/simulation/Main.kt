@@ -34,21 +34,24 @@ private val robot = struct(Chassis()) {
         pose(0, 0, PI / 4)
     }
 }
-
 // 编码器在机器人上的位姿
 private val encodersOnRobot =
     robot.devices
         .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
         .toMap()
-
-private val solve =
+// 位姿参数
+private val parameters =
     encodersOnRobot
         .toList()
         .run {
-            listOf(single { it.first.key == 0 }.second,
-                   single { it.first.key == 1 }.second,
-                   single { it.first.key == 2 }.second)
-        }.map { (p, d) ->
+            listOf(single { (e, _) -> e.key == 0 }.second,
+                   single { (e, _) -> e.key == 1 }.second,
+                   single { (e, _) -> e.key == 2 }.second)
+        }
+// 解算矩阵
+private val solve =
+    parameters
+        .map { (p, d) ->
             val (x, y) = p
             val (cos, sin) = d.toVector()
             Triple(-sin, cos, sin * x - cos * y)
@@ -92,13 +95,7 @@ fun main() = runBlocking {
                 val v2 = dValue[2].update(set.single { it.key == 2 }.value).data
                 val (u1, u2, theta) = solve * listVectorOf(v0, v1, v2)
                 val (x, y) = if (doubleEquals(theta, .0)) {
-                    val (t0, t1, t2) = encodersOnRobot
-                        .toList()
-                        .run {
-                            listOf(single { it.first.key == 0 }.second.d,
-                                   single { it.first.key == 1 }.second.d,
-                                   single { it.first.key == 2 }.second.d)
-                        }
+                    val (t0, t1, t2) = parameters.map { (_, d) -> d }
                     val (cos0, sin0) = t0.toVector()
                     val (cos1, sin1) = t1.toVector()
                     val (cos2, sin2) = t2.toVector()
