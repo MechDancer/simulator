@@ -24,15 +24,9 @@ import kotlin.math.tan
 
 // 机器人机械结构
 private val robot = struct(Chassis()) {
-    Encoder(0) asSub {
-        pose(0, +.2, 0)
-    }
-    Encoder(1) asSub {
-        pose(0, -.2, PI / 2)
-    }
-    Encoder(2) asSub {
-        pose(0, 0, PI / 4)
-    }
+    Encoder(0) asSub { pose(0, +.2, 0) }
+    Encoder(1) asSub { pose(0, -.2, PI / 2) }
+    Encoder(2) asSub { pose(0, 0, PI / 4) }
 }
 // 编码器在机器人上的位姿
 private val encodersOnRobot =
@@ -89,28 +83,27 @@ fun main() = runBlocking {
                     .onEach { (encoder, pose) -> encoder.update(pose, delta) }
             }
             .keys
-            .let { set ->
-                val v0 = dValue[0].update(set.single { it.key == 0 }.value).data
-                val v1 = dValue[1].update(set.single { it.key == 1 }.value).data
-                val v2 = dValue[2].update(set.single { it.key == 2 }.value).data
+            .let { set -> (0..2).map { i -> dValue[i].update(set.single { it.key == i }.value).data } }
+            .let { (v0, v1, v2) ->
                 val (u1, u2, theta) = solve * listVectorOf(v0, v1, v2)
-                val (x, y) = if (doubleEquals(theta, .0)) {
-                    val (t0, t1, t2) = parameters.map { (_, d) -> d }
-                    val (cos0, sin0) = t0.toVector()
-                    val (cos1, sin1) = t1.toVector()
-                    val (cos2, sin2) = t2.toVector()
-                    equations {
-                        this[cos0, sin0] = v0
-                        this[cos1, sin1] = v1
-                        this[cos2, sin2] = v2
+                val (x, y) =
+                    if (doubleEquals(theta, .0)) {
+                        val (t0, t1, t2) = parameters.map { (_, d) -> d }
+                        val (cos0, sin0) = t0.toVector()
+                        val (cos1, sin1) = t1.toVector()
+                        val (cos2, sin2) = t2.toVector()
+                        equations {
+                            this[cos0, sin0] = v0
+                            this[cos1, sin1] = v1
+                            this[cos2, sin2] = v2
+                        }
+                    } else {
+                        val tan = 1 / tan(theta / 2)
+                        equations {
+                            this[1, -tan] = 2 * u1 / theta
+                            this[+tan, 1] = 2 * u2 / theta
+                        }
                     }.solve()!!
-                } else {
-                    val tan = 1 / tan(theta / 2)
-                    equations {
-                        this[1, -tan] = 2 * u1 / theta
-                        this[+tan, 1] = 2 * u2 / theta
-                    }.solve()!!
-                }
                 pose = pose plusDelta Odometry.odometry(x, y, theta)
 //              println("actual = $actual, pose = $pose")
                 println("error = ${(actual.p - pose.p).norm()}")
