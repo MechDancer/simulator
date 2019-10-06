@@ -17,7 +17,6 @@ import org.mechdancer.common.invoke
 import org.mechdancer.common.toTransformation
 import org.mechdancer.simulation.Default.commands
 import org.mechdancer.simulation.Default.remote
-import org.mechdancer.simulation.Default.speedSimulation
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -52,7 +51,7 @@ fun main() = runBlocking {
                       vector2DOf(+.2, +.2)).put(odometry(1, 1, 0))
     val path: Queue<Odometry> = LinkedList<Odometry>()
     launch { for (command in commands) buffer.set(velocity(0.1 * command.v, 0.5 * command.w)) }
-    speedSimulation(this) { buffer.get() }
+    speedSimulation { buffer.get() }
         .consumeEach { (_, v) ->
             val (_, pose) = robot.what.drive(v)
             val odometryToRobot = -pose.toTransformation()

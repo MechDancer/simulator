@@ -11,7 +11,6 @@ import org.mechdancer.common.filters.Differential
 import org.mechdancer.common.toPose
 import org.mechdancer.simulation.Default.newNonOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
-import org.mechdancer.simulation.Default.speedSimulation
 import org.mechdancer.simulation.DifferentialOdometry.Key.Left
 import org.mechdancer.simulation.DifferentialOdometry.Key.Right
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
@@ -39,7 +38,7 @@ fun main() = runBlocking {
     val odometry = DifferentialOdometry(0.4, Stamped(t0, Odometry()))
     // 仿真
     val random = newNonOmniRandomDriving() power speed
-    speedSimulation(this, t0, 20L, speed) {
+    speedSimulation(t0, 20L, speed) {
         random.next()
     }.consumeEach { (t, v) ->
         //  计算机器人位姿增量

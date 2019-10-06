@@ -1,10 +1,9 @@
 package org.mechdancer.simulation
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.produce
-import org.mechdancer.common.Stamped
+import kotlinx.coroutines.launch
 import org.mechdancer.common.Velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.dependency.must
@@ -16,7 +15,6 @@ import org.mechdancer.remote.resources.Networks
 import org.mechdancer.simulation.prefabs.OneStepTransferRandomDrivingBuilderDSL.Companion.oneStepTransferRandomDriving
 import java.io.DataInputStream
 import kotlin.concurrent.thread
-import kotlin.system.measureTimeMillis
 
 object Default {
     private val commands_ = Channel<NonOmnidirectional>(Channel.CONFLATED)
@@ -76,38 +74,5 @@ object Default {
                 row(.01, -1, .01)
                 row(.01, .01, -1)
             }
-        }
-
-    // 倍速仿真
-    @ExperimentalCoroutinesApi
-    fun <T> speedSimulation(
-        scope: CoroutineScope,
-        t0: Long = 0,
-        dt: Long = 5L,
-        speed: Int = 1,
-        block: () -> T
-    ) =
-        when {
-            speed > 0 -> scope.produce {
-                // 仿真时间
-                var time = t0
-                while (true) {
-                    val cost = measureTimeMillis {
-                        time += dt * speed
-                        send(Stamped(time, block()))
-                    }
-                    if (dt > cost) delay(dt - cost)
-                }
-            }
-            speed < 0 -> scope.produce {
-                // 仿真时间
-                var time = t0
-                while (true) {
-                    time += dt
-                    send(Stamped(time, block()))
-                    delay(dt * -speed)
-                }
-            }
-            else      -> throw IllegalArgumentException("speed cannot be zero")
         }
 }
