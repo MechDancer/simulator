@@ -1,4 +1,4 @@
-package org.mechdancer.simulation
+package org.mechdancer.simulation.map
 
 import org.mechdancer.algebra.function.vector.div
 import org.mechdancer.algebra.function.vector.times
@@ -8,7 +8,11 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+private const val bytesPerPixel = 3
+
 private data class Pixel(val x: Int, val y: Int)
+
+val String.bmp get() = File("$this.bmp")
 
 fun List<Vector2D>.saveToBmp(
     fileName: String,
@@ -30,13 +34,13 @@ fun List<Vector2D>.saveToBmp(
         .toList()
     val height = y1 - y0 + 1
     val width = x1 - x0 + 1
-    val bytesPerRow = (3 * width + 3) / 4 * 4
+    val bytesPerRow = (bytesPerPixel * width + 3) / 4 * 4
     val size = bytesPerRow * height + 54
 
     val actualName =
         fileName
             .takeIf { it.endsWith(".bmp") }
-            ?: "$fileName.bmp"
+        ?: "$fileName.bmp"
     ByteBuffer
         .allocate(size + 2 * Int.SIZE_BYTES)
         .apply {
@@ -62,9 +66,9 @@ fun List<Vector2D>.saveToBmp(
         }
         .array()
         .also { array ->
-            val white = ByteArray(3) { 255.toByte() }
+            val white = ByteArray(bytesPerPixel) { 255.toByte() }
             pixels
-                .map { (x, y) -> (y - y0) * bytesPerRow + (x - x0) * 3 + 54 }
+                .map { (x, y) -> (y - y0) * bytesPerRow + (x - x0) * bytesPerPixel + 54 }
                 .forEach { i -> white.copyInto(array, i) }
         }
         .let(File(actualName)::writeBytes)
@@ -81,7 +85,7 @@ fun File.loadAsScan(): List<Vector2D> {
     val width = buffer.getInt(18)
     val height = buffer.getInt(22)
     val pixelsPerMeter = buffer.getInt(38)
-    val bytesPerRow = (3 * width + 3) / 4 * 4
+    val bytesPerRow = (bytesPerPixel * width + 3) / 4 * 4
 
     require(pixelsPerMeter == buffer.getInt(42))
     val x0: Int
@@ -103,8 +107,8 @@ fun File.loadAsScan(): List<Vector2D> {
     return sequence {
         for (x in 0 until width)
             for (y in 0 until height) {
-                val i = ((y - y0) * bytesPerRow + (x - x0) * 3 + 54)
-                if (bytes.copyOfRange(i, i + 3).any { it != 0.toByte() })
+                val i = ((y - y0) * bytesPerRow + (x - x0) * bytesPerPixel + 54)
+                if (bytes.copyOfRange(i, i + bytesPerPixel).any { it != 0.toByte() })
                     yield(vector2DOf(x, y) / pixelsPerMeter)
             }
     }.toList()
