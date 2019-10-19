@@ -2,17 +2,11 @@ package org.mechdancer.simulation.map
 
 import org.mechdancer.algebra.function.vector.div
 import org.mechdancer.algebra.implement.matrix.ArrayMatrix
-import org.mechdancer.algebra.implement.matrix.builder.arrayMatrixOf
-import org.mechdancer.algebra.implement.matrix.builder.matrix
-import org.mechdancer.algebra.implement.matrix.builder.toArrayMatrix
 import org.mechdancer.algebra.implement.vector.Vector2D
 import org.mechdancer.algebra.implement.vector.vector2DOf
-import org.mechdancer.algebra.implement.vector.vector2DOfZero
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import kotlin.math.exp
-import kotlin.math.ln
 
 /**
  * 栅格地图
@@ -113,29 +107,5 @@ data class GridMap(
                            pixelsPerMeter,
                            ArrayMatrix(width, data))
         }
-    }
-}
-
-fun main() {
-    val map = GridMap(offset = vector2DOfZero(),
-                      pixelsPerMeter = 10,
-                      data = matrix {
-                          row(.0, .0, .1, .0, .0)
-                          row(.0, .1, .2, .1, .0)
-                          row(.1, .2, .3, .2, .1)
-                          row(.0, .1, .2, .1, .0)
-                          row(.0, .0, .1, .0, .0)
-                      }.toArrayMatrix())
-    map.saveToBmp("test".bmp, 3) { p, _ ->
-        when {
-            p <= 0 -> -128
-            p >= 1 -> +127
-            else   -> ln(p / (1 - p)).toInt()
-        }.toByte()
-    }
-    GridMap.loadFromBmp(File("test.bmp"), 3) {
-        1 - 1 / (1 + exp(it.sum() / 3.0))
-    }.also {
-        println(it.data)
     }
 }
