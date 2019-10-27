@@ -54,7 +54,7 @@ fun main() = runBlocking {
     speedSimulation { buffer.get() }
         .consumeEach { (_, v) ->
             val (_, pose) = robot.what.drive(v)
-            val odometryToRobot = -pose.toTransformation()
+            val odometryToRobot = pose.toTransformation().inverse()
             if (path.lastOrNull()?.takeIf { (it.p - pose.p).norm() < 0.05 } == null) {
                 path.offer(pose)
                 if (path.size > 40) path.poll()

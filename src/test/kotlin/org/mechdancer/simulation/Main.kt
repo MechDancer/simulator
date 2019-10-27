@@ -25,7 +25,7 @@ fun main() = runBlocking {
         behavior.next()
     }.consumeEach { (t, v) ->
         val (_, personOnMap) = person.drive(v, t)
-        val mapToRobot = -robot[t].toTransformation()
+        val mapToRobot = robot[t].toTransformation().inverse()
         val personOnRobot = mapToRobot(personOnMap)
         val personToRobot = personOnRobot.toTransformation()
         val (x, y) = personToRobot(targetOnPerson)

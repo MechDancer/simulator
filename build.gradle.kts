@@ -25,12 +25,12 @@ allprojects {
         // 自动依赖 kotlin 标准库
         implementation(kotlin("stdlib-jdk8"))
         // 线性代数
-        implementation("org.mechdancer", "linearalgebra", "0.2.5-dev-3")
+        implementation("org.mechdancer", "linearalgebra", "+")
         // 使用示例中采用协程
-        implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "+")
+        implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.2")
         // 支持网络工具
-        testImplementation("org.mechdancer", "dependency", "0.1.0-rc-3")
-        testImplementation("org.mechdancer", "remote", "0.2.1-dev-13")
+        testImplementation("org.mechdancer", "dependency", "+")
+        testImplementation("org.mechdancer", "remote", "+")
         testImplementation("org.slf4j", "slf4j-api", "+")
         testImplementation(kotlin("reflect"))
         // 单元测试
