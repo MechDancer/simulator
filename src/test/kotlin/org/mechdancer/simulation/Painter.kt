@@ -9,6 +9,7 @@ import org.mechdancer.remote.presets.RemoteHub
 import org.mechdancer.remote.protocol.writeEnd
 import org.mechdancer.remote.resources.Command
 import org.mechdancer.simulation.FrameType.*
+import org.mechdancer.simulation.map.shape.Polygon
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import kotlin.concurrent.thread
@@ -204,6 +205,24 @@ fun RemoteHub.paintPoses(
             writeDouble(p.x)
             writeDouble(p.y)
             writeDouble(d.asRadian())
+        }
+    }
+}
+
+fun RemoteHub.paint(
+    topic: String,
+    shape: Polygon
+) = paint(topic) {
+    DataOutputStream(this).apply {
+        writeByte(0)
+        writeByte(TwoDouble.value)
+        for ((x, y) in shape.vertex) {
+            writeDouble(x)
+            writeDouble(y)
+        }
+        with(shape.vertex.first()) {
+            writeDouble(x)
+            writeDouble(y)
         }
     }
 }
