@@ -9,8 +9,7 @@ import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.implement.vector.Vector2D
 import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.common.Odometry
-import org.mechdancer.common.Odometry.Companion.odometry
-import org.mechdancer.common.Stamped
+import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.common.invoke
@@ -30,7 +29,7 @@ private fun Iterable<Vector2D>.put(pose: Odometry) =
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
     val buffer = AtomicReference<NonOmnidirectional>(velocity(0, 0))
-    val robot = struct(Chassis(Stamped(0, Odometry())))
+    val robot = struct(Chassis())
     val chassis = shape(vector2DOf(+.2, +.1),
                         vector2DOf(+.1, +.2),
                         vector2DOf(+.1, +.25),
@@ -48,7 +47,7 @@ fun main() = runBlocking {
     val block = shape(vector2DOf(-.2, +.2),
                       vector2DOf(-.2, -.2),
                       vector2DOf(+.2, -.2),
-                      vector2DOf(+.2, +.2)).put(odometry(1, 1, 0))
+                      vector2DOf(+.2, +.2)).put(pose(1, 1, 0))
     val path: Queue<Odometry> = LinkedList<Odometry>()
     launch { for (command in commands) buffer.set(velocity(0.1 * command.v, 0.5 * command.w)) }
     speedSimulation { buffer.get() }

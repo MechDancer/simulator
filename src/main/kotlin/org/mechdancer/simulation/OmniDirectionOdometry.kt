@@ -11,7 +11,6 @@ import org.mechdancer.algebra.implement.equation.builder.equations
 import org.mechdancer.algebra.implement.matrix.builder.matrix
 import org.mechdancer.algebra.implement.vector.listVectorOf
 import org.mechdancer.common.Odometry
-import org.mechdancer.common.Odometry.Companion.odometry
 import org.mechdancer.geometry.angle.toVector
 import kotlin.math.tan
 
@@ -20,7 +19,7 @@ class OmniDirectionOdometry(
     encoder1: Odometry,
     encoder2: Odometry
 ) {
-    var pose = Odometry()
+    var pose = Odometry.pose()
         private set
     private val parameters = listOf(encoder0, encoder1, encoder2)
     private val solver =
@@ -60,7 +59,7 @@ class OmniDirectionOdometry(
                     this[+tan, 1] = 2 * u2 / theta
                 }
             }.solve()!!
-        pose = pose plusDelta odometry(x, y, theta)
+        pose = pose plusDelta Odometry.pose(x, y, theta)
         return pose
     }
 }

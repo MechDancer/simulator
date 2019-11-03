@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
-import org.mechdancer.common.Odometry
+import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.filters.Differential
 import org.mechdancer.common.toPose
@@ -18,7 +18,7 @@ import kotlin.collections.component3
 import kotlin.math.PI
 
 // 机器人机械结构
-private val robot = struct(Chassis(Stamped(0L, Odometry()))) {
+private val robot = struct(Chassis(Stamped(0L, pose()))) {
     Encoder(0) asSub { pose(0, +.2, 0) }
     Encoder(1) asSub { pose(0, -.2, 0) }
     Encoder(2) asSub { pose(0, 0, PI / 2) }

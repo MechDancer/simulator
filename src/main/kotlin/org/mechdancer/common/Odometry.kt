@@ -4,7 +4,6 @@ import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.implement.vector.Vector2D
 import org.mechdancer.algebra.implement.vector.vector2DOf
-import org.mechdancer.algebra.implement.vector.vector2DOfZero
 import org.mechdancer.geometry.angle.*
 
 /**
@@ -13,8 +12,8 @@ import org.mechdancer.geometry.angle.*
  * @param d 方向
  */
 data class Odometry(
-    val p: Vector2D = vector2DOfZero(),
-    val d: Angle = .0.toRad()
+    val p: Vector2D,
+    val d: Angle
 ) {
     /** 增量 [delta] 累加到里程 */
     infix fun plusDelta(delta: Odometry) =
@@ -34,7 +33,7 @@ data class Odometry(
     override fun toString() = "(${p.x}, ${p.y})($d)"
 
     companion object {
-        fun odometry(x: Number, y: Number, theta: Number = 0) =
+        fun pose(x: Number = 0, y: Number = 0, theta: Number = 0) =
             Odometry(vector2DOf(x, y), theta.toRad())
     }
 }

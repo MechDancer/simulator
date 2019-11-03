@@ -1,6 +1,7 @@
 package org.mechdancer.simulation
 
 import org.mechdancer.common.Odometry
+import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Stamped.Companion.stamp
 import org.mechdancer.common.Velocity
@@ -11,7 +12,7 @@ import kotlin.math.abs
 /** 通用底盘模型 */
 class Chassis(origin: Stamped<Odometry>? = null) : Filter<Velocity, Stamped<Odometry>> {
     /** 位姿 */
-    var odometry = origin ?: stamp(Odometry())
+    var odometry = origin ?: stamp(pose())
         private set
 
     /** 运动状态 */
@@ -48,7 +49,7 @@ class Chassis(origin: Stamped<Odometry>? = null) : Filter<Velocity, Stamped<Odom
     }
 
     override fun clear() {
-        odometry = stamp(Odometry())
+        odometry = stamp(pose())
         velocity = Static
     }
 

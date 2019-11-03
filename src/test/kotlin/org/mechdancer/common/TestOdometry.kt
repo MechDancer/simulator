@@ -3,6 +3,7 @@ package org.mechdancer.common
 import org.junit.Test
 import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.algebra.implement.vector.vector2DOfZero
+import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.geometry.angle.toRad
 import kotlin.math.PI
 
@@ -12,7 +13,7 @@ class TestOdometry {
      */
     @Test
     fun test() {
-        val step0 = Odometry()
+        val step0 = pose()
         assert(step0 == Odometry(vector2DOfZero(), .0.toRad())) {
             "里程计初始化错误：$step0"
         }

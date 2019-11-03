@@ -1,7 +1,6 @@
 package org.mechdancer.struct
 
 import org.mechdancer.common.Odometry
-import org.mechdancer.common.Odometry.Companion.odometry
 import org.mechdancer.common.toPose
 import org.mechdancer.common.toTransformation
 import org.mechdancer.geometry.transformation.Transformation
@@ -18,6 +17,6 @@ open class RelationRecorderDSL internal constructor() {
         }
 
     fun pose(x: Number, y: Number, theta: Number = 0) {
-        relation = odometry(x, y, theta).toTransformation()
+        relation = Odometry.pose(x, y, theta).toTransformation()
     }
 }

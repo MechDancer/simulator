@@ -14,7 +14,7 @@ sealed class Velocity {
 
     /** 静止不动 */
     object Static : Velocity() {
-        override fun toDeltaOdometry(dt: Double) = Odometry()
+        override fun toDeltaOdometry(dt: Double) = Odometry.pose()
     }
 
     /** 非全向 */

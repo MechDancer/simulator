@@ -5,16 +5,15 @@ import org.mechdancer.algebra.function.vector.times
 import org.mechdancer.common.Odometry
 import org.mechdancer.common.Polar
 import org.mechdancer.common.toTransformation
-import org.mechdancer.geometry.angle.Angle
-import org.mechdancer.geometry.angle.toAngle
-import org.mechdancer.geometry.angle.toDegree
-import org.mechdancer.geometry.angle.toVector
+import org.mechdancer.geometry.angle.*
 import org.mechdancer.simulation.map.shape.Polygon
 import org.mechdancer.simulation.map.shape.rangeTo
 import kotlin.math.PI
 import kotlin.math.roundToInt
 
-class Lidar(resolution: Angle) {
+class Lidar(val key: Any, resolution: Angle) {
+    var direction: Angle = 0.toRad()
+        private set
     private val pointCount = (2 * PI / resolution.asRadian()).roundToInt()
     operator fun get(pose: Odometry, obstacles: List<Polygon>) {
         val tf = pose.toTransformation()

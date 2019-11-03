@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
-import org.mechdancer.common.Odometry
+import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.filters.Differential
 import org.mechdancer.common.toPose
@@ -23,7 +23,7 @@ fun main() = runBlocking {
     // 仿真速度
     val speed = 20
     // 机器人机械结构
-    val robot = struct(Chassis(Stamped(t0, Odometry()))) {
+    val robot = struct(Chassis(Stamped(t0, pose()))) {
         Encoder(Left) asSub { pose(0, +0.2) }
         Encoder(Right) asSub { pose(0, -0.2) }
     }
@@ -35,7 +35,7 @@ fun main() = runBlocking {
     // 里程计增量计算
     val differential = Differential(robot.what.get(), t0) { _, old, new -> new minusState old }
     // 差动里程计
-    val odometry = DifferentialOdometry(0.4, Stamped(t0, Odometry()))
+    val odometry = DifferentialOdometry(0.4, Stamped(t0, pose()))
     // 仿真
     val random = newNonOmniRandomDriving() power speed
     speedSimulation(t0, 20L, speed) {
