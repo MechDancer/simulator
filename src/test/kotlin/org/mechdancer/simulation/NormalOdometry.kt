@@ -19,9 +19,9 @@ import kotlin.math.PI
 
 // 机器人机械结构
 private val robot = struct(Chassis(Stamped(0L, pose()))) {
-    Encoder(0) asSub { pose(0, +.2, 0) }
-    Encoder(1) asSub { pose(0, -.2, 0) }
-    Encoder(2) asSub { pose(0, 0, PI / 2) }
+    Encoder(0) asSub { where(0, +.2, 0) }
+    Encoder(1) asSub { where(0, -.2, 0) }
+    Encoder(2) asSub { where(0, 0, PI / 2) }
 }
 // 编码器在机器人上的位姿
 private val encodersOnRobot =

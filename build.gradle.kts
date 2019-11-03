@@ -11,7 +11,7 @@ buildScan {
 //  publishAlways()
 }
 
-version = "0.0.2"
+version = "0.0.3"
 
 // 包括主项目的构建脚本
 allprojects {

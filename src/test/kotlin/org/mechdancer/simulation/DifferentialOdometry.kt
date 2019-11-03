@@ -24,8 +24,8 @@ fun main() = runBlocking {
     val speed = 20
     // 机器人机械结构
     val robot = struct(Chassis(Stamped(t0, pose()))) {
-        Encoder(Left) asSub { pose(0, +0.2) }
-        Encoder(Right) asSub { pose(0, -0.2) }
+        Encoder(Left) asSub { where(0, +0.2) }
+        Encoder(Right) asSub { where(0, -0.2) }
     }
     // 编码器在机器人上的位姿
     val encodersOnRobot =

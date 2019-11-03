@@ -16,7 +16,7 @@ open class RelationRecorderDSL internal constructor() {
             relation = value.toTransformation()
         }
 
-    fun pose(x: Number, y: Number, theta: Number = 0) {
+    fun where(x: Number, y: Number, theta: Number = 0) {
         relation = Odometry.pose(x, y, theta).toTransformation()
     }
 }

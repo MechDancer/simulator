@@ -8,5 +8,5 @@ internal infix fun Vector2D.cross(others: Vector2D): Double {
     return x0 * y1 - x1 * y0
 }
 
-internal operator fun Vector2D.rangeTo(others: Vector2D) =
+operator fun Vector2D.rangeTo(others: Vector2D) =
     Segment(this, others)
