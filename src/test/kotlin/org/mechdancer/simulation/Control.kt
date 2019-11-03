@@ -14,10 +14,10 @@ import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.common.invoke
+import org.mechdancer.common.shape.Polygon
 import org.mechdancer.common.toTransformation
 import org.mechdancer.simulation.Default.commands
 import org.mechdancer.simulation.Default.remote
-import org.mechdancer.simulation.map.shape.Polygon
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference

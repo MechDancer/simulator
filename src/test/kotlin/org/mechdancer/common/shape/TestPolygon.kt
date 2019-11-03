@@ -1,4 +1,4 @@
-package org.mechdancer.simulation.map.shape
+package org.mechdancer.common.shape
 
 import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.function.vector.times
@@ -42,8 +42,8 @@ fun main() {
                 .map { Polar(it.norm(), it.toAngle().asRadian()) }
                 .minBy { it.distance }
         }.toList()
-    val inner = Polygon(Circle(.15, 64).sample().toList())
-    val outer = Polygon(Circle(10.0, 64).sample().toList())
+    val inner = Circle(.15, 64).sample()
+    val outer = Circle(10.0, 64).sample()
     thread {
         while (true) {
             obstacles.forEachIndexed { i, item ->

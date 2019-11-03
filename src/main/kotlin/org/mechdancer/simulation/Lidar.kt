@@ -6,12 +6,12 @@ import org.mechdancer.algebra.implement.vector.to2D
 import org.mechdancer.common.*
 import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Velocity.Companion.velocity
+import org.mechdancer.common.shape.Polygon
+import org.mechdancer.common.shape.rangeTo
 import org.mechdancer.geometry.angle.Angle
 import org.mechdancer.geometry.angle.rotate
 import org.mechdancer.geometry.angle.toRad
 import org.mechdancer.geometry.angle.toVector
-import org.mechdancer.simulation.map.shape.Polygon
-import org.mechdancer.simulation.map.shape.rangeTo
 
 class Lidar(
     validRange: ClosedFloatingPointRange<Double>,

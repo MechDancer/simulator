@@ -1,4 +1,4 @@
-package org.mechdancer.simulation.map.shape
+package org.mechdancer.common.shape
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach

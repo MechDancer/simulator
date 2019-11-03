@@ -1,4 +1,4 @@
-package org.mechdancer.simulation.map.shape
+package org.mechdancer.common.shape
 
 import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.function.vector.times
@@ -13,13 +13,12 @@ import kotlin.math.sqrt
 class Circle(val radius: Double, val sampleCount: Int = 16) : AnalyticalShape {
     override val size = PI * radius * radius
     override fun contains(p: Vector2D) = p.norm() < radius
-    override fun sample() = sequence {
+    override fun sample(): Polygon {
         // 步进角
         val theta = 2 * PI / sampleCount
         // 等价半径
         val equivalent = radius / sqrt(sin(theta) / theta)
         // 生成
-        for (i in 0 until sampleCount)
-            yield((i * theta).toRad().toVector() * equivalent)
+        return List(sampleCount) { i -> (i * theta).toRad().toVector() * equivalent }.let(::Polygon)
     }
 }

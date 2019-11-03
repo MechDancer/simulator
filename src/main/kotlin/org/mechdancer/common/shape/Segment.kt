@@ -1,4 +1,4 @@
-package org.mechdancer.simulation.map.shape
+package org.mechdancer.common.shape
 
 import org.mechdancer.algebra.doubleEquals
 import org.mechdancer.algebra.function.vector.dot

@@ -1,4 +1,4 @@
-package org.mechdancer.simulation.map.shape
+package org.mechdancer.common.shape
 
 import org.mechdancer.algebra.implement.vector.Vector2D
 

@@ -5,11 +5,11 @@ import org.mechdancer.algebra.function.vector.x
 import org.mechdancer.algebra.function.vector.y
 import org.mechdancer.algebra.function.vector.z
 import org.mechdancer.common.Odometry
+import org.mechdancer.common.shape.Polygon
 import org.mechdancer.remote.presets.RemoteHub
 import org.mechdancer.remote.protocol.writeEnd
 import org.mechdancer.remote.resources.Command
 import org.mechdancer.simulation.FrameType.*
-import org.mechdancer.simulation.map.shape.Polygon
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import kotlin.concurrent.thread
