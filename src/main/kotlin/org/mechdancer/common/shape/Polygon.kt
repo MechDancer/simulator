@@ -25,14 +25,14 @@ class Polygon(val vertex: List<Vector2D>) : Shape {
             var p0 = vertex.last()
             vertex
                 .asSequence()
-                .count {
+                .count { p1 ->
                     val (_, y0) = p0
-                    val (_, y1) = it
+                    val (_, y1) = p1
                     when (y) {
-                        in y0..y1 -> p - p0 cross it - p0 >= 0
-                        in y1..y0 -> p - it cross p0 - it >= 0
+                        in y0..y1 -> p1 - p0 cross p - p0 >= 0
+                        in y1..y0 -> p0 - p1 cross p - p1 >= 0
                         else      -> false
-                    }.also { p0 = p }
+                    }.also { p0 = p1 }
                 } % 2 == 1
         }
 
