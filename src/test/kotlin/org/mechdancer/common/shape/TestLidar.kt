@@ -62,7 +62,7 @@ fun main() = runBlocking(Dispatchers.Default) {
         remote.paintPose("机器人", robotOnMap)
         val points =
             lidar
-                .update(t * 1E-3, robotOnMap, lidarOnRobot, obstacles)
+                .update(t * 1E-3, robotOnMap, lidarOnRobot, listOf(), obstacles)
                 .map { it.data }
                 .filterNot { it.distance.isNaN() }
                 .map { lidarToMap(it.toVector2D()).to2D() }
