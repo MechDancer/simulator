@@ -9,8 +9,8 @@ import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity.Companion.velocity
-import org.mechdancer.common.invoke
 import org.mechdancer.common.toTransformation
+import org.mechdancer.common.transform
 import org.mechdancer.simulation.Default.newOmniRandomDriving
 
 private const val T0 = 0L
@@ -26,7 +26,7 @@ fun main() = runBlocking {
     }.consumeEach { (t, v) ->
         val (_, personOnMap) = person.drive(v, t)
         val mapToRobot = robot[t].toTransformation().inverse()
-        val personOnRobot = mapToRobot(personOnMap)
+        val personOnRobot = mapToRobot.transform(personOnMap)
         val personToRobot = personOnRobot.toTransformation()
         val (x, y) = personToRobot(targetOnPerson)
         robot.drive(velocity(.01 * x, .01 * y, .01 * personOnRobot.d.asRadian()), t)

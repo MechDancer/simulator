@@ -13,9 +13,9 @@ import org.mechdancer.common.Odometry
 import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
-import org.mechdancer.common.invoke
 import org.mechdancer.common.shape.Polygon
 import org.mechdancer.common.toTransformation
+import org.mechdancer.common.transform
 import org.mechdancer.simulation.Default.commands
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
@@ -60,7 +60,7 @@ fun main() = runBlocking {
             }
 
             remote.paint("机器人", chassis)
-            remote.paintPoses("路径", path.map { odometryToRobot.invoke(it) })
+            remote.paintPoses("路径", path.map { odometryToRobot.transform(it) })
             val tf = odometryToRobot * pose(1, 1, 1).toTransformation()
             val blockOnOdometry = block.vertex.map(tf::invoke).map(Vector::to2D).let(::Polygon)
             remote.paint("障碍物", blockOnOdometry)

@@ -84,7 +84,7 @@ class Lidar(
             // 循环体
             while (t < time) {
                 // 计算
-                val lidarOnMap = pose.toTransformation()(lidarOnRobot)
+                val lidarOnMap = pose.toTransformation().transform(lidarOnRobot)
                 val min =
                     cover.intersect(lidarOnRobot, angle)
                         ?.let { a ->
