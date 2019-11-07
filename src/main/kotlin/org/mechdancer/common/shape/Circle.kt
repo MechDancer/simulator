@@ -11,6 +11,11 @@ import kotlin.math.sqrt
 
 /** 半径为 [radius] 的正圆 */
 class Circle(val radius: Double, val sampleCount: Int = 16) : AnalyticalShape {
+    init {
+        require(radius > 0)
+        require(sampleCount >= 3)
+    }
+
     override val size = PI * radius * radius
     override fun contains(p: Vector2D) = p.norm() < radius
     override fun sample(): Polygon {

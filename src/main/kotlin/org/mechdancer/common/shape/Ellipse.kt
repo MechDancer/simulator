@@ -1,29 +1,39 @@
 package org.mechdancer.common.shape
 
-import org.mechdancer.algebra.function.vector.euclid
+import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.implement.vector.Vector2D
-import org.mechdancer.algebra.implement.vector.vector2DOf
-import kotlin.math.*
+import org.mechdancer.common.Polar
+import org.mechdancer.geometry.angle.toAngle
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sqrt
 
-class Ellipse(val a: Double, val b: Double, val sampleCount: Int = 16) : AnalyticalShape {
-    val c = sqrt(abs(a * a - b * b))
-    val d = hypot(min(a, b), c)
+class Ellipse(
+    val c: Double,
+    val e: Double,
+    val sampleCount: Int = 64
+) : AnalyticalShape {
+    init {
+        require(c > 0)
+        require(0 < e && e < 1)
+    }
+
+    val a = c / e
+    val b = sqrt(a * a - c * c)
+    val p = b * b / c
+
     override val size = PI * a * b
-    override fun contains(p: Vector2D) =
-        if (a > b) {
-            (p euclid vector2DOf(+c, 0)) + (p euclid vector2DOf(-c, 0))
-        } else {
-            (p euclid vector2DOf(0,
-                                 +c)) + (p euclid vector2DOf(0, -c))
-        } < 2 * d
+    override fun contains(p: Vector2D) = p.norm() < rho(p.toAngle().asRadian())
 
     override fun sample(): Polygon {
-//        // 步进角
-//        val theta = 2 * PI / sampleCount
-//        // 等价半径
-//        val equivalent = radius / sqrt(sin(theta) / theta)
-//        // 生成
-//        return List(sampleCount) { i -> (i * theta).toRad().toVector() * equivalent }.let(::Polygon)
-        return TODO()
+        // 步进角
+        val step = 2 * PI / sampleCount
+        // 生成
+        return List(sampleCount) { i ->
+            (i * step).let { theta -> Polar(rho(theta), theta) }.toVector2D()
+        }.let(::Polygon)
     }
+
+    private fun rho(theta: Double) = e * p / (1 - e * cos(theta))
+
 }
