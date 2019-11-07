@@ -35,5 +35,4 @@ class Ellipse(
     }
 
     private fun rho(theta: Double) = e * p / (1 - e * cos(theta))
-
 }
