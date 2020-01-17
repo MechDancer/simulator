@@ -3,8 +3,8 @@ package org.mechdancer.simulation
 import org.mechdancer.algebra.function.vector.euclid
 import org.mechdancer.algebra.function.vector.times
 import org.mechdancer.algebra.implement.vector.to2D
-import org.mechdancer.common.*
-import org.mechdancer.common.Odometry.Companion.pose
+import org.mechdancer.common.Polar
+import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.shape.Polygon
 import org.mechdancer.common.shape.rangeTo
@@ -12,6 +12,10 @@ import org.mechdancer.geometry.angle.Angle
 import org.mechdancer.geometry.angle.rotate
 import org.mechdancer.geometry.angle.toRad
 import org.mechdancer.geometry.angle.toVector
+import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.pose2D
+import org.mechdancer.geometry.transformation.toTransformation
+import org.mechdancer.geometry.transformation.transform
 import kotlin.math.min
 
 /**
@@ -35,11 +39,11 @@ class Lidar(
 
     // 状态
     private var lastT = .0
-    private var lastPose = pose()
+    private var lastPose = pose2D()
     private var lastAngle = 0.toRad()
 
     /** 初始化 */
-    fun initialize(t: Double, pose: Odometry, angle: Angle) {
+    fun initialize(t: Double, pose: Pose2D, angle: Angle) {
         lastT = t
         lastPose = pose
         lastAngle = angle
@@ -56,8 +60,8 @@ class Lidar(
      */
     fun update(
         time: Double,
-        robotOnMap: Odometry,
-        lidarOnRobot: Odometry,
+        robotOnMap: Pose2D,
+        lidarOnRobot: Pose2D,
         cover: List<Polygon>,
         obstacles: List<Polygon>
     ): Sequence<Stamped<Polar>> {
@@ -105,7 +109,7 @@ class Lidar(
 
     // 计算碰撞
     private fun List<Polygon>.intersect(
-        lidarOnSystem: Odometry,
+        lidarOnSystem: Pose2D,
         angle: Angle
     ): Double? {
         val endOnLidar = angle.toVector() * maxDistance

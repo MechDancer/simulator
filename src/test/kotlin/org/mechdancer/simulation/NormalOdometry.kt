@@ -5,20 +5,19 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
-import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.filters.Differential
-import org.mechdancer.common.toPose
+import org.mechdancer.geometry.transformation.pose2D
+import org.mechdancer.geometry.transformation.toPose2D
 import org.mechdancer.simulation.Default.newOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.component3
 import kotlin.math.PI
 
 // 机器人机械结构
-private val robot = struct(Chassis(Stamped(0L, pose()))) {
+private val robot = struct(Chassis(Stamped(0L, pose2D()))) {
     Encoder(0) asSub { where(0, +.2, 0) }
     Encoder(1) asSub { where(0, -.2, 0) }
     Encoder(2) asSub { where(0, 0, PI / 2) }
@@ -26,7 +25,7 @@ private val robot = struct(Chassis(Stamped(0L, pose()))) {
 // 编码器在机器人上的位姿
 private val encodersOnRobot =
     robot.devices
-        .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
+        .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose2D()) }
         .toMap()
 
 @ExperimentalCoroutinesApi
@@ -55,8 +54,8 @@ fun main() = runBlocking {
                 .let { set -> (0..2).map { i -> dValue[i].update(set.single { it.key == i }.value).data } }
                 .let { (v0, v1, v2) -> odometry.update(v0, v1, v2) }
             // 显示
-            remote.paintPose("机器人", actual)
-            remote.paintPose("里程计", pose)
+            remote.paint("机器人", actual)
+            remote.paint("里程计", pose)
             println("actual = $actual, pose = $pose, error = ${(actual.p - pose.p).norm()}")
         }
 }

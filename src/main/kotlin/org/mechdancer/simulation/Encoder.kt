@@ -6,8 +6,8 @@ import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.implement.vector.Vector2D
 import org.mechdancer.algebra.implement.vector.vector2DOf
-import org.mechdancer.common.Odometry
 import org.mechdancer.geometry.angle.toVector
+import org.mechdancer.geometry.transformation.Pose2D
 import kotlin.math.tan
 
 /** 模拟编码器 */
@@ -26,7 +26,7 @@ class Encoder(val key: Any) {
 
     override fun toString() = "encoder<$key> = $value"
 
-    fun update(encoderOnRobot: Odometry, robotDelta: Odometry): Double {
+    fun update(encoderOnRobot: Pose2D, robotDelta: Pose2D): Double {
         val (p, d) = robotDelta
         value += when (val theta = d.asRadian()) {
             .0   -> encoderOnRobot.d.toVector() dot p

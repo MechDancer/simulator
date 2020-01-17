@@ -5,16 +5,18 @@ import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.geometry.angle.rotate
 import org.mechdancer.geometry.angle.toAngle
 import org.mechdancer.geometry.angle.toRad
+import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.pose2D
 import kotlin.math.cos
 import kotlin.math.sin
 
 /** 标准底盘运动学模型下的控制量 */
 sealed class Velocity {
-    abstract fun toDeltaOdometry(dt: Double): Odometry
+    abstract fun toDeltaOdometry(dt: Double): Pose2D
 
     /** 静止不动 */
     object Static : Velocity() {
-        override fun toDeltaOdometry(dt: Double) = Odometry.pose()
+        override fun toDeltaOdometry(dt: Double) = pose2D()
     }
 
     /** 非全向 */
@@ -32,15 +34,15 @@ sealed class Velocity {
         val vy: Double,
         val w: Double
     ) : Velocity() {
-        override fun toDeltaOdometry(dt: Double): Odometry {
+        override fun toDeltaOdometry(dt: Double): Pose2D {
             val v = vector2DOf(vx, vy)
             return if (w == .0)
-                Odometry(v * dt, 0.toRad())
+                Pose2D(v * dt, 0.toRad())
             else {
                 val theta = w * dt
                 val r = v.length / w
-                Odometry(vector2DOf(sin(theta), 1 - cos(theta)) * r rotate v.toAngle(),
-                         theta.toRad())
+                Pose2D(vector2DOf(sin(theta), 1 - cos(theta)) * r rotate v.toAngle(),
+                       theta.toRad())
             }
         }
     }

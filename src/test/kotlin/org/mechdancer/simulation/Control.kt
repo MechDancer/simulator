@@ -9,13 +9,13 @@ import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.implement.vector.to2D
 import org.mechdancer.algebra.implement.vector.vector2DOf
-import org.mechdancer.common.Odometry
-import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.common.shape.Polygon
-import org.mechdancer.common.toTransformation
-import org.mechdancer.common.transform
+import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.pose2D
+import org.mechdancer.geometry.transformation.toTransformation
+import org.mechdancer.geometry.transformation.transform
 import org.mechdancer.simulation.Default.commands
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.struct.StructBuilderDSL.Companion.struct
@@ -48,7 +48,7 @@ fun main() = runBlocking {
         vector2DOf(+.2, -.2),
         vector2DOf(+.2, +.2)
     ))
-    val path: Queue<Odometry> = LinkedList<Odometry>()
+    val path: Queue<Pose2D> = LinkedList<Pose2D>()
     launch { for (command in commands) buffer.set(velocity(0.1 * command.v, 0.5 * command.w)) }
     speedSimulation { buffer.get() }
         .consumeEach { (_, v) ->
@@ -61,7 +61,7 @@ fun main() = runBlocking {
 
             remote.paint("机器人", chassis)
             remote.paintPoses("路径", path.map { odometryToRobot.transform(it) })
-            val tf = odometryToRobot * pose(1, 1, 1).toTransformation()
+            val tf = odometryToRobot * pose2D(1, 1, 1).toTransformation()
             val blockOnOdometry = block.vertex.map(tf::invoke).map(Vector::to2D).let(::Polygon)
             remote.paint("障碍物", blockOnOdometry)
         }

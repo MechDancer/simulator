@@ -5,10 +5,10 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
-import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.filters.Differential
-import org.mechdancer.common.toPose
+import org.mechdancer.geometry.transformation.pose2D
+import org.mechdancer.geometry.transformation.toPose2D
 import org.mechdancer.simulation.Default.newNonOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.simulation.DifferentialOdometry.Key.Left
@@ -23,19 +23,19 @@ fun main() = runBlocking {
     // 仿真速度
     val speed = 20
     // 机器人机械结构
-    val robot = struct(Chassis(Stamped(t0, pose()))) {
+    val robot = struct(Chassis(Stamped(t0, pose2D()))) {
         Encoder(Left) asSub { where(0, +0.2) }
         Encoder(Right) asSub { where(0, -0.2) }
     }
     // 编码器在机器人上的位姿
     val encodersOnRobot =
         robot.devices
-            .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose()) }
+            .mapNotNull { (device, tf) -> (device as? Encoder)?.to(tf.toPose2D()) }
             .toMap()
     // 里程计增量计算
     val differential = Differential(robot.what.get(), t0) { _, old, new -> new minusState old }
     // 差动里程计
-    val odometry = DifferentialOdometry(0.4, Stamped(t0, pose()))
+    val odometry = DifferentialOdometry(0.4, Stamped(t0, pose2D()))
     // 仿真
     val random = newNonOmniRandomDriving() power speed
     speedSimulation(t0, 20L, speed) {
@@ -51,7 +51,7 @@ fun main() = runBlocking {
         val pose = odometry.update(get(Left) to get(Right), t).data
         // 显示
         println("time = ${t / 1000.0}, error = ${(current.p - pose.p).norm()}")
-        remote.paintPose("机器人", current)
-        remote.paintPose("里程计", pose)
+        remote.paint("机器人", current)
+        remote.paint("里程计", pose)
     }
 }

@@ -6,11 +6,11 @@ import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.component1
 import org.mechdancer.algebra.function.vector.component2
 import org.mechdancer.algebra.implement.vector.vector2DOf
-import org.mechdancer.common.Odometry.Companion.pose
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity.Companion.velocity
-import org.mechdancer.common.toTransformation
-import org.mechdancer.common.transform
+import org.mechdancer.geometry.transformation.pose2D
+import org.mechdancer.geometry.transformation.toTransformation
+import org.mechdancer.geometry.transformation.transform
 import org.mechdancer.simulation.Default.newOmniRandomDriving
 
 private const val T0 = 0L
@@ -19,8 +19,8 @@ private val targetOnPerson = vector2DOf(-.5, 0)
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
     val behavior = newOmniRandomDriving()
-    val person = Chassis(Stamped(T0, pose()))
-    val robot = Chassis(Stamped(T0, pose()))
+    val person = Chassis(Stamped(T0, pose2D()))
+    val robot = Chassis(Stamped(T0, pose2D()))
     speedSimulation(speed = -50) {
         behavior.next()
     }.consumeEach { (t, v) ->

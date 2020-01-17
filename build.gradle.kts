@@ -1,14 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.50"
-    `build-scan`
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-//  publishAlways()
+    kotlin("jvm") version "1.3.61"
 }
 
 version = "0.0.3"
@@ -20,12 +13,16 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven("https://maven.aliyun.com/repository/central")
+        maven("https://maven.aliyun.com/repository/google")
+        maven("https://maven.aliyun.com/repository/gradle-plugin")
+        maven("https://maven.aliyun.com/repository/jcenter")
     }
     dependencies {
         // 自动依赖 kotlin 标准库
         implementation(kotlin("stdlib-jdk8"))
         // 线性代数
-        implementation("org.mechdancer", "linearalgebra", "+")
+        implementation(fileTree("libs"))
         // 使用示例中采用协程
         implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.2")
         // 支持网络工具

@@ -1,22 +1,19 @@
 package org.mechdancer.struct
 
-import org.mechdancer.common.Odometry
-import org.mechdancer.common.toPose
-import org.mechdancer.common.toTransformation
-import org.mechdancer.geometry.transformation.Transformation
+import org.mechdancer.geometry.transformation.*
 
 /**
  * 关系记录器
  */
 open class RelationRecorderDSL internal constructor() {
     var relation = Transformation.unit(2)
-    var pose: Odometry
-        get() = relation.toPose()
+    var pose: Pose2D
+        get() = relation.toPose2D()
         set(value) {
             relation = value.toTransformation()
         }
 
     fun where(x: Number, y: Number, theta: Number = 0) {
-        relation = Odometry.pose(x, y, theta).toTransformation()
+        relation = pose2D(x, y, theta).toTransformation()
     }
 }
