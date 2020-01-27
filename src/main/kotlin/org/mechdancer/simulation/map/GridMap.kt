@@ -3,7 +3,7 @@ package org.mechdancer.simulation.map
 import org.mechdancer.algebra.function.vector.div
 import org.mechdancer.algebra.implement.matrix.ArrayMatrix
 import org.mechdancer.algebra.implement.vector.Vector2D
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.vector2D
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -103,7 +103,7 @@ data class GridMap(
                     throw IllegalArgumentException("error format in bmp file")
             }
 
-            return GridMap(vector2DOf(x0, y0) / pixelsPerMeter,
+            return GridMap(vector2D(x0, y0) / pixelsPerMeter,
                            pixelsPerMeter,
                            ArrayMatrix(width, data))
         }

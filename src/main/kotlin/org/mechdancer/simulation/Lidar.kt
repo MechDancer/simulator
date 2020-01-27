@@ -2,7 +2,6 @@ package org.mechdancer.simulation
 
 import org.mechdancer.algebra.function.vector.euclid
 import org.mechdancer.algebra.function.vector.times
-import org.mechdancer.algebra.implement.vector.to2D
 import org.mechdancer.common.Polar
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity.Companion.velocity
@@ -13,9 +12,9 @@ import org.mechdancer.geometry.angle.rotate
 import org.mechdancer.geometry.angle.toRad
 import org.mechdancer.geometry.angle.toVector
 import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.minusState
+import org.mechdancer.geometry.transformation.plusDelta
 import org.mechdancer.geometry.transformation.pose2D
-import org.mechdancer.geometry.transformation.toTransformation
-import org.mechdancer.geometry.transformation.transform
 import kotlin.math.min
 
 /**
@@ -88,7 +87,7 @@ class Lidar(
             // 循环体
             while (t < time) {
                 // 计算
-                val lidarOnMap = pose.toTransformation().transform(lidarOnRobot)
+                val lidarOnMap = pose * lidarOnRobot
                 val min =
                     cover.intersect(lidarOnRobot, angle)
                         ?.let { a ->
@@ -113,7 +112,7 @@ class Lidar(
         angle: Angle
     ): Double? {
         val endOnLidar = angle.toVector() * maxDistance
-        val light = lidarOnSystem.p..lidarOnSystem.toTransformation()(endOnLidar).to2D()
+        val light = lidarOnSystem.p..lidarOnSystem * endOnLidar
         var min = Double.MAX_VALUE
         val blind =
             asSequence()

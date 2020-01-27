@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.component1
 import org.mechdancer.algebra.function.vector.component2
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.geometry.transformation.pose2D
@@ -14,7 +14,7 @@ import org.mechdancer.geometry.transformation.transform
 import org.mechdancer.simulation.Default.newOmniRandomDriving
 
 private const val T0 = 0L
-private val targetOnPerson = vector2DOf(-.5, 0)
+private val targetOnPerson = vector2D(-.5, 0)
 
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {

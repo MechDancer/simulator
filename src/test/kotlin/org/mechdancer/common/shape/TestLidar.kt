@@ -3,7 +3,7 @@ package org.mechdancer.common.shape
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
 import org.mechdancer.algebra.implement.vector.to2D
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
@@ -20,19 +20,19 @@ import kotlin.math.PI
 fun main() = runBlocking(Dispatchers.Default) {
     val obstacles = listOf(
         Polygon(listOf(
-            vector2DOf(-1, +1),
-            vector2DOf(-5, +1),
-            vector2DOf(-5, +5),
-            vector2DOf(-1, +5))),
+            vector2D(-1, +1),
+            vector2D(-5, +1),
+            vector2D(-5, +5),
+            vector2D(-1, +5))),
         Polygon(listOf(
-            vector2DOf(-1, -2),
-            vector2DOf(-3, -1),
-            vector2DOf(-2, -6))),
+            vector2D(-1, -2),
+            vector2D(-3, -1),
+            vector2D(-2, -6))),
         Polygon(listOf(
-            vector2DOf(+3, +10),
-            vector2DOf(+4, +10),
-            vector2DOf(+4, -10),
-            vector2DOf(+3, -10))))
+            vector2D(+3, +10),
+            vector2D(+4, +10),
+            vector2D(+4, -10),
+            vector2D(+3, -10))))
     val chassis = Chassis(Stamped(0L, pose2D()))
     val lidar = Lidar(.15..8.0, 1800.toDegree(), 1E-3).apply {
         initialize(.0, pose2D(), 0.toRad())

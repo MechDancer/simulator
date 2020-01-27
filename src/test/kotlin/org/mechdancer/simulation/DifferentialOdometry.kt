@@ -7,6 +7,7 @@ import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.filters.Differential
+import org.mechdancer.geometry.transformation.minusState
 import org.mechdancer.geometry.transformation.pose2D
 import org.mechdancer.geometry.transformation.toPose2D
 import org.mechdancer.simulation.Default.newNonOmniRandomDriving

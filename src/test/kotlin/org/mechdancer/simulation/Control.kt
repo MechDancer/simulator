@@ -8,7 +8,7 @@ import org.mechdancer.algebra.core.Vector
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.implement.vector.to2D
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.common.shape.Polygon
@@ -27,26 +27,26 @@ fun main() = runBlocking {
     val buffer = AtomicReference<NonOmnidirectional>(velocity(0, 0))
     val robot = struct(Chassis())
     val chassis = Polygon(listOf(
-        vector2DOf(+.2, +.1),
-        vector2DOf(+.1, +.2),
-        vector2DOf(+.1, +.25),
-        vector2DOf(-.1, +.25),
-        vector2DOf(-.1, +.2),
-        vector2DOf(-.2, +.2),
-        vector2DOf(-.4, +.1),
-        vector2DOf(-.4, -.1),
-        vector2DOf(-.2, -.2),
-        vector2DOf(-.1, -.2),
-        vector2DOf(-.1, -.25),
-        vector2DOf(+.1, -.25),
-        vector2DOf(+.1, -.2),
-        vector2DOf(+.2, -.1)
+        vector2D(+.2, +.1),
+        vector2D(+.1, +.2),
+        vector2D(+.1, +.25),
+        vector2D(-.1, +.25),
+        vector2D(-.1, +.2),
+        vector2D(-.2, +.2),
+        vector2D(-.4, +.1),
+        vector2D(-.4, -.1),
+        vector2D(-.2, -.2),
+        vector2D(-.1, -.2),
+        vector2D(-.1, -.25),
+        vector2D(+.1, -.25),
+        vector2D(+.1, -.2),
+        vector2D(+.2, -.1)
     ))
     val block = Polygon(listOf(
-        vector2DOf(-.2, +.2),
-        vector2DOf(-.2, -.2),
-        vector2DOf(+.2, -.2),
-        vector2DOf(+.2, +.2)
+        vector2D(-.2, +.2),
+        vector2D(-.2, -.2),
+        vector2D(+.2, -.2),
+        vector2D(+.2, +.2)
     ))
     val path: Queue<Pose2D> = LinkedList<Pose2D>()
     launch { for (command in commands) buffer.set(velocity(0.1 * command.v, 0.5 * command.w)) }

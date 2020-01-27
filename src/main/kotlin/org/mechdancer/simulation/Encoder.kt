@@ -5,7 +5,6 @@ import org.mechdancer.algebra.function.vector.dot
 import org.mechdancer.algebra.function.vector.minus
 import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.implement.vector.Vector2D
-import org.mechdancer.algebra.implement.vector.vector2DOf
 import org.mechdancer.geometry.angle.toVector
 import org.mechdancer.geometry.transformation.Pose2D
 import kotlin.math.tan
@@ -39,6 +38,6 @@ class Encoder(val key: Any) {
     }
 
     private companion object {
-        fun Vector2D.rotate90() = vector2DOf(-y, +x)
+        fun Vector2D.rotate90() = Vector2D(-y, +x)
     }
 }

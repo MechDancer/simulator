@@ -1,13 +1,14 @@
 package org.mechdancer.simulation
 
 import org.mechdancer.algebra.function.vector.times
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.Vector2D
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Stamped.Companion.stamp
 import org.mechdancer.common.filters.Differential
 import org.mechdancer.common.filters.Filter
 import org.mechdancer.geometry.angle.toRad
 import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.plusDelta
 import org.mechdancer.geometry.transformation.pose2D
 import kotlin.math.cos
 import kotlin.math.sin
@@ -43,7 +44,7 @@ class DifferentialOdometry(
         val length = (r + l) / 2
         val delta = when (val theta = (r - l) / width) {
             .0   -> pose2D(length, 0)
-            else -> Pose2D(vector2DOf(sin(theta), (1 - cos(theta))) * (length / theta),
+            else -> Pose2D(Vector2D(sin(theta), (1 - cos(theta))) * (length / theta),
                            theta.toRad())
         }
         odometry = Stamped(now, odometry.data plusDelta delta)

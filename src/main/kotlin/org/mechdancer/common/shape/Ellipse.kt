@@ -8,6 +8,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sqrt
 
+/** 椭圆 */
 class Ellipse(
     val c: Double,
     val e: Double,

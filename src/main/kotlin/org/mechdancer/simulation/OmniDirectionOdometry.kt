@@ -12,6 +12,7 @@ import org.mechdancer.algebra.implement.matrix.builder.matrix
 import org.mechdancer.algebra.implement.vector.listVectorOf
 import org.mechdancer.geometry.angle.toVector
 import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.plusDelta
 import org.mechdancer.geometry.transformation.pose2D
 import kotlin.math.tan
 

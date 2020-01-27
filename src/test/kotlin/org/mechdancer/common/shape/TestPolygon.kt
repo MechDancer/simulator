@@ -2,7 +2,7 @@ package org.mechdancer.common.shape
 
 import org.mechdancer.algebra.function.vector.norm
 import org.mechdancer.algebra.function.vector.times
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.common.Polar
 import org.mechdancer.geometry.angle.toAngle
 import org.mechdancer.geometry.angle.toDegree
@@ -16,19 +16,19 @@ import kotlin.concurrent.thread
 fun main() {
     val obstacles = listOf(
         Polygon(listOf(
-            vector2DOf(1, 1),
-            vector2DOf(5, 1),
-            vector2DOf(5, 5),
-            vector2DOf(1, 5))),
+            vector2D(1, 1),
+            vector2D(5, 1),
+            vector2D(5, 5),
+            vector2D(1, 5))),
         Polygon(listOf(
-            vector2DOf(1, -2),
-            vector2DOf(3, -1),
-            vector2DOf(2, -6))),
+            vector2D(1, -2),
+            vector2D(3, -1),
+            vector2D(2, -6))),
         Polygon(listOf(
-            vector2DOf(-3, +10),
-            vector2DOf(-4, +10),
-            vector2DOf(-4, -10),
-            vector2DOf(-3, -10))))
+            vector2D(-3, +10),
+            vector2D(-4, +10),
+            vector2D(-4, -10),
+            vector2D(-3, -10))))
     val points =
         sequence {
             for (i in 0 until 360) {

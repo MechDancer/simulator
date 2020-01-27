@@ -1,6 +1,6 @@
 package org.mechdancer.struct
 
-import org.mechdancer.geometry.transformation.Transformation
+import org.mechdancer.geometry.transformation.MatrixTransformation
 
 /**
  * 机械结构关系
@@ -8,12 +8,12 @@ import org.mechdancer.geometry.transformation.Transformation
  */
 class Struct<T>(
     val what: T,
-    vararg children: Pair<Struct<*>, Transformation>
+    vararg children: Pair<Struct<*>, MatrixTransformation>
 ) {
     private val children = children.toMap()
 
     /** 计算并缓存结构体到其所有各级子结构体的变换关系 */
-    val devices: Map<*, Transformation> by lazy {
+    val devices: Map<*, MatrixTransformation> by lazy {
         this.children
             .asSequence()
             .flatMap { (child, childToThis) ->
@@ -22,7 +22,7 @@ class Struct<T>(
                         child to childToThis * deviceToChild
                     }
             }
-            .let { it + (what to Transformation.unit(2)) }
+            .let { it + (what to MatrixTransformation.unit(2)) }
             .toMap()
     }
 }

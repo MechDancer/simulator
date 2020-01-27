@@ -1,7 +1,7 @@
 package org.mechdancer.common
 
 import org.mechdancer.algebra.function.vector.times
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.Vector2D
 import org.mechdancer.geometry.angle.rotate
 import org.mechdancer.geometry.angle.toAngle
 import org.mechdancer.geometry.angle.toRad
@@ -35,13 +35,13 @@ sealed class Velocity {
         val w: Double
     ) : Velocity() {
         override fun toDeltaOdometry(dt: Double): Pose2D {
-            val v = vector2DOf(vx, vy)
+            val v = Vector2D(vx, vy)
             return if (w == .0)
                 Pose2D(v * dt, 0.toRad())
             else {
                 val theta = w * dt
                 val r = v.length / w
-                Pose2D(vector2DOf(sin(theta), 1 - cos(theta)) * r rotate v.toAngle(),
+                Pose2D(Vector2D(sin(theta), 1 - cos(theta)) * r rotate v.toAngle(),
                        theta.toRad())
             }
         }

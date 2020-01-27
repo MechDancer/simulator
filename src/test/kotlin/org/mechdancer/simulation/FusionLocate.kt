@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.mechdancer.algebra.function.vector.x
 import org.mechdancer.algebra.function.vector.y
-import org.mechdancer.algebra.implement.vector.vector2DOf
+import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.geometry.transformation.toTransformation
 import org.mechdancer.simulation.Default.newNonOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
@@ -16,7 +16,7 @@ import kotlin.random.Random
 
 // 机器人机械结构
 private val chassis = Chassis()
-private val locatorOnRobot = vector2DOf(-0.31, 0)
+private val locatorOnRobot = vector2D(-0.31, 0)
 
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {

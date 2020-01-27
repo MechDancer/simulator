@@ -6,7 +6,7 @@ import org.mechdancer.geometry.transformation.*
  * 关系记录器
  */
 open class RelationRecorderDSL internal constructor() {
-    var relation = Transformation.unit(2)
+    var relation = MatrixTransformation.unit(2)
     var pose: Pose2D
         get() = relation.toPose2D()
         set(value) {

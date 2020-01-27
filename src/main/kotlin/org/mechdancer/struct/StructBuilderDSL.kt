@@ -1,12 +1,12 @@
 package org.mechdancer.struct
 
-import org.mechdancer.geometry.transformation.Transformation
+import org.mechdancer.geometry.transformation.MatrixTransformation
 
 /**
  * 结构体构建器
  */
 class StructBuilderDSL<T> private constructor(private val root: T) : RelationRecorderDSL() {
-    private var children = mutableMapOf<Struct<*>, Transformation>()
+    private var children = mutableMapOf<Struct<*>, MatrixTransformation>()
 
     infix fun <U> U.asSub(block: StructBuilderDSL<U>.() -> Unit) {
         val (child, tf) = StructBuilderDSL(this).apply(block).build()

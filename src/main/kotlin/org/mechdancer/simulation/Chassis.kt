@@ -6,6 +6,7 @@ import org.mechdancer.common.Velocity
 import org.mechdancer.common.Velocity.Static
 import org.mechdancer.common.filters.Filter
 import org.mechdancer.geometry.transformation.Pose2D
+import org.mechdancer.geometry.transformation.plusDelta
 import org.mechdancer.geometry.transformation.pose2D
 import kotlin.math.abs
 
