@@ -5,7 +5,7 @@ import org.mechdancer.algebra.implement.vector.Vector2D
 
 /** 多边形 */
 class Polygon(val vertex: List<Vector2D>) : Shape {
-    override val size by lazy {
+    override val area by lazy {
         if (vertex.size < 3) .0
         else {
             var last = vertex[0]

@@ -27,7 +27,7 @@ class Encoder(val key: Any) {
 
     fun update(encoderOnRobot: Pose2D, robotDelta: Pose2D): Double {
         val (p, d) = robotDelta
-        value += when (val theta = d.asRadian()) {
+        value += when (val theta = d.rad) {
             .0   -> encoderOnRobot.d.toVector() dot p
             else -> {
                 val (ep, ed) = encoderOnRobot

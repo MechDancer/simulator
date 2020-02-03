@@ -1,10 +1,10 @@
 package org.mechdancer.common
 
-import org.mechdancer.algebra.implement.vector.Vector2D
-import kotlin.math.cos
-import kotlin.math.sin
+import org.mechdancer.algebra.function.vector.times
+import org.mechdancer.geometry.angle.Angle
+import org.mechdancer.geometry.angle.toVector
 
 /** 极坐标 */
-data class Polar(val distance: Double, val angle: Double) {
-    fun toVector2D() = Vector2D(distance * cos(angle), distance * sin(angle))
+data class Polar(val distance: Double, val angle: Angle) {
+    fun toVector2D() = angle.toVector() * distance
 }

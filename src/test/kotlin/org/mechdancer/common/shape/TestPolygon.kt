@@ -39,7 +39,7 @@ fun main() {
             obstacles
                 .asSequence()
                 .flatMap { it.intersect(light).asSequence() }
-                .map { Polar(it.norm(), it.toAngle().asRadian()) }
+                .map { Polar(it.norm(), it.toAngle()) }
                 .minBy { it.distance }
         }.toList()
     val inner = Circle(.15, 64).sample()

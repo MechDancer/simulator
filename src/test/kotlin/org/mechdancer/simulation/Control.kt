@@ -14,7 +14,7 @@ import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.common.shape.Polygon
 import org.mechdancer.geometry.transformation.Pose2D
 import org.mechdancer.geometry.transformation.pose2D
-import org.mechdancer.geometry.transformation.toTransformation
+import org.mechdancer.geometry.transformation.toMatrixTransformation
 import org.mechdancer.geometry.transformation.transform
 import org.mechdancer.simulation.Default.commands
 import org.mechdancer.simulation.Default.remote
@@ -53,7 +53,7 @@ fun main() = runBlocking {
     speedSimulation { buffer.get() }
         .consumeEach { (_, v) ->
             val (_, pose) = robot.what.drive(v)
-            val odometryToRobot = pose.toTransformation().inverse()
+            val odometryToRobot = pose.toMatrixTransformation().inverse()
             if (path.lastOrNull()?.takeIf { (it.p - pose.p).norm() < 0.05 } == null) {
                 path.offer(pose)
                 if (path.size > 40) path.poll()
@@ -61,7 +61,7 @@ fun main() = runBlocking {
 
             remote.paint("机器人", chassis)
             remote.paintPoses("路径", path.map { odometryToRobot.transform(it) })
-            val tf = odometryToRobot * pose2D(1, 1, 1).toTransformation()
+            val tf = odometryToRobot * pose2D(1, 1, 1).toMatrixTransformation()
             val blockOnOdometry = block.vertex.map(tf::invoke).map(Vector::to2D).let(::Polygon)
             remote.paint("障碍物", blockOnOdometry)
         }

@@ -29,10 +29,12 @@ class Lidar(
     private val interval: Double
 ) {
     // 转速（弧度 / 秒）
-    private val radPerSecond = speed.asRadian()
+    private val radPerSecond = speed.rad
     private val rotateStep = (radPerSecond * interval).toRad()
+
     // 盲区
     private val minDistance = validRange.start
+
     // 视野
     private val maxDistance = validRange.endInclusive
 
@@ -82,7 +84,7 @@ class Lidar(
                 velocity(
                     dp.x / dt,
                     dp.y / dt,
-                    dd.asRadian() / dt
+                    dd.rad / dt
                 ).toDeltaOdometry(interval)
             // 循环体
             while (t < time) {
@@ -97,7 +99,7 @@ class Lidar(
                         ?.takeIf { it < Double.MAX_VALUE }
                     ?: Double.NaN
                 // 发送
-                yield(Stamped((t * 1E-3).toLong(), Polar(min, angle.asRadian())))
+                yield(Stamped((t * 1E-3).toLong(), Polar(min, angle)))
                 // 更新状态
                 t += interval
                 angle = angle rotate rotateStep

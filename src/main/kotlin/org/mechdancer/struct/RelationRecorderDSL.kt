@@ -10,10 +10,10 @@ open class RelationRecorderDSL internal constructor() {
     var pose: Pose2D
         get() = relation.toPose2D()
         set(value) {
-            relation = value.toTransformation()
+            relation = value.toMatrixTransformation()
         }
 
     fun where(x: Number, y: Number, theta: Number = 0) {
-        relation = pose2D(x, y, theta).toTransformation()
+        relation = pose2D(x, y, theta).toMatrixTransformation()
     }
 }

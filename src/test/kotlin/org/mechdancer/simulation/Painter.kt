@@ -95,7 +95,7 @@ fun RemoteHub.paint(
 fun RemoteHub.paint(
     topic: String,
     pose: Pose2D
-) = paint(topic, pose.p.x, pose.p.y, pose.d.asRadian())
+) = paint(topic, pose.p.x, pose.p.y, pose.d.rad)
 
 /**
  * 画单帧二维信号
@@ -141,7 +141,7 @@ fun RemoteHub.paintPoses(
         for ((p, d) in list) {
             writeFloat(p.x.toFloat())
             writeFloat(p.y.toFloat())
-            writeFloat(d.asRadian().toFloat())
+            writeFloat(d.rad.toFloat())
         }
     }
 }

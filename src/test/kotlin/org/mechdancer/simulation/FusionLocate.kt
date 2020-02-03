@@ -5,10 +5,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.mechdancer.algebra.function.vector.x
-import org.mechdancer.algebra.function.vector.y
 import org.mechdancer.algebra.implement.vector.vector2D
-import org.mechdancer.geometry.transformation.toTransformation
 import org.mechdancer.simulation.Default.newNonOmniRandomDriving
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.simulation.random.Normal
@@ -30,9 +27,9 @@ fun main() = runBlocking {
     }.consumeEach { v ->
         //  计算机器人位姿增量
         val (_, robotOnOdometry) = chassis.drive(v)
-        val locatorOnOdometry = robotOnOdometry.toTransformation()(locatorOnRobot)
+        val locatorOnOdometry = robotOnOdometry * locatorOnRobot
         robotOnOdometry.also { (p, d) ->
-            remote.paint("chassis", p.x, p.y, d.asRadian())
+            remote.paint("chassis", p.x, p.y, d.rad)
         }
         if (Random.nextDouble() > 0.5)
             locatorOnOdometry.run {

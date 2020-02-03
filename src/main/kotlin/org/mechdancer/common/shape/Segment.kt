@@ -7,6 +7,7 @@ import org.mechdancer.algebra.function.vector.plus
 import org.mechdancer.algebra.function.vector.times
 import org.mechdancer.algebra.implement.vector.Vector2D
 
+/** 线段 */
 data class Segment(
     val begin: Vector2D,
     val end: Vector2D

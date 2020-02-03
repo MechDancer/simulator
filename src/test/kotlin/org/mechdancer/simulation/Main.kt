@@ -9,7 +9,7 @@ import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.common.Stamped
 import org.mechdancer.common.Velocity.Companion.velocity
 import org.mechdancer.geometry.transformation.pose2D
-import org.mechdancer.geometry.transformation.toTransformation
+import org.mechdancer.geometry.transformation.toMatrixTransformation
 import org.mechdancer.geometry.transformation.transform
 import org.mechdancer.simulation.Default.newOmniRandomDriving
 
@@ -25,11 +25,11 @@ fun main() = runBlocking {
         behavior.next()
     }.consumeEach { (t, v) ->
         val (_, personOnMap) = person.drive(v, t)
-        val mapToRobot = robot[t].toTransformation().inverse()
+        val mapToRobot = robot[t].toMatrixTransformation().inverse()
         val personOnRobot = mapToRobot.transform(personOnMap)
-        val personToRobot = personOnRobot.toTransformation()
+        val personToRobot = personOnRobot.toMatrixTransformation()
         val (x, y) = personToRobot(targetOnPerson)
-        robot.drive(velocity(.01 * x, .01 * y, .01 * personOnRobot.d.asRadian()), t)
+        robot.drive(velocity(.01 * x, .01 * y, .01 * personOnRobot.d.rad), t)
         println("$x, $y, ${personOnRobot.d}")
     }
 }

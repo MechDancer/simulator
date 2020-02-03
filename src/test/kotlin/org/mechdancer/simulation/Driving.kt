@@ -20,7 +20,7 @@ fun main() = runBlocking {
         }
     }.consumeEach { v ->
         chassis.drive(v)
-            .also { (_, pose) -> remote.paint("pose", pose.p.x, pose.p.y, pose.d.asRadian()) }
+            .also { (_, pose) -> remote.paint("pose", pose.p.x, pose.p.y, pose.d.rad) }
             .let(::println)
     }
 }

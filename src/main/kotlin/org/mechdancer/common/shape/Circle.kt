@@ -16,7 +16,7 @@ class Circle(val radius: Double, val sampleCount: Int = 16) : AnalyticalShape {
         require(sampleCount >= 3)
     }
 
-    override val size = PI * radius * radius
+    override val area = PI * radius * radius
     override fun contains(p: Vector2D) = p.norm() < radius
     override fun sample(): Polygon {
         // 步进角

@@ -10,7 +10,7 @@ import org.mechdancer.common.Velocity.NonOmnidirectional
 import org.mechdancer.geometry.angle.toDegree
 import org.mechdancer.geometry.angle.toRad
 import org.mechdancer.geometry.transformation.pose2D
-import org.mechdancer.geometry.transformation.toTransformation
+import org.mechdancer.geometry.transformation.toMatrixTransformation
 import org.mechdancer.simulation.*
 import org.mechdancer.simulation.Default.remote
 import java.util.concurrent.atomic.AtomicReference
@@ -38,7 +38,7 @@ fun main() = runBlocking(Dispatchers.Default) {
         initialize(.0, pose2D(), 0.toRad())
     }
     val lidarOnRobot = pose2D(x = .15)
-    val lidarToRobot = lidarOnRobot.toTransformation()
+    val lidarToRobot = lidarOnRobot.toMatrixTransformation()
 
     val buffer = AtomicReference<NonOmnidirectional>(Velocity.velocity(0, 0))
     launch {
@@ -57,7 +57,7 @@ fun main() = runBlocking(Dispatchers.Default) {
         buffer.get()
     }.consumeEach { (t, v) ->
         val (_, robotOnMap) = chassis.drive(v)
-        val robotToMap = robotOnMap.toTransformation()
+        val robotToMap = robotOnMap.toMatrixTransformation()
         val lidarToMap = robotToMap * lidarToRobot
         remote.paint("机器人", robotOnMap)
         val points =
