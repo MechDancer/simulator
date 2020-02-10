@@ -1,6 +1,7 @@
 package org.mechdancer.simulation
 
 import org.mechdancer.algebra.implement.vector.Vector2D
+import org.mechdancer.algebra.implement.vector.Vector3D
 import org.mechdancer.common.shape.Polygon
 import org.mechdancer.dependency.must
 import org.mechdancer.geometry.transformation.Pose2D
@@ -29,11 +30,13 @@ private object PaintCommand : Command {
 // 画任意内容
 private fun RemoteHub.paint(
     topic: String,
+    byte: Int,
     block: ByteArrayOutputStream.() -> Unit
 ) {
     ByteArrayOutputStream()
         .also { stream ->
             stream.writeEnd(topic)
+            stream.write(byte)
             stream.block()
         }
         .toByteArray()
@@ -46,9 +49,8 @@ private fun RemoteHub.paint(
 fun RemoteHub.paint(
     topic: String,
     value: Number
-) = paint(topic) {
+) = paint(topic, 1) {
     DataOutputStream(this).apply {
-        writeByte(1)
         writeFloat(value.toFloat())
     }
 }
@@ -60,9 +62,8 @@ fun RemoteHub.paint(
     topic: String,
     x: Number,
     y: Number
-) = paint(topic) {
+) = paint(topic, 2) {
     DataOutputStream(this).apply {
-        writeByte(2)
         writeFloat(x.toFloat())
         writeFloat(y.toFloat())
     }
@@ -76,9 +77,8 @@ fun RemoteHub.paint(
     x: Number,
     y: Number,
     theta: Number
-) = paint(topic) {
+) = paint(topic, 2 or DIR_MASK) {
     DataOutputStream(this).apply {
-        writeByte(2 or DIR_MASK)
         writeFloat(x.toFloat())
         writeFloat(y.toFloat())
         writeFloat(theta.toFloat())
@@ -103,9 +103,8 @@ fun RemoteHub.paint(
 fun RemoteHub.paintFrame2(
     topic: String,
     list: Iterable<Pair<Number, Number>>
-) = paint(topic) {
+) = paint(topic, 2 or FRAME_MASK) {
     DataOutputStream(this).apply {
-        writeByte(2 or FRAME_MASK)
         for ((x, y) in list) {
             writeFloat(x.toFloat())
             writeFloat(y.toFloat())
@@ -119,9 +118,8 @@ fun RemoteHub.paintFrame2(
 fun RemoteHub.paintVectors(
     topic: String,
     list: Iterable<Vector2D>
-) = paint(topic) {
+) = paint(topic, 2 or FRAME_MASK) {
     DataOutputStream(this).apply {
-        writeByte(2 or FRAME_MASK)
         for ((x, y) in list) {
             writeFloat(x.toFloat())
             writeFloat(y.toFloat())
@@ -135,9 +133,8 @@ fun RemoteHub.paintVectors(
 fun RemoteHub.paintPoses(
     topic: String,
     list: Iterable<Pose2D>
-) = paint(topic) {
+) = paint(topic, 2 or FRAME_MASK or DIR_MASK) {
     DataOutputStream(this).apply {
-        writeByte(2 or FRAME_MASK or DIR_MASK)
         for ((p, d) in list) {
             writeFloat(p.x.toFloat())
             writeFloat(p.y.toFloat())
@@ -149,9 +146,8 @@ fun RemoteHub.paintPoses(
 fun RemoteHub.paint(
     topic: String,
     shape: Polygon
-) = paint(topic) {
+) = paint(topic, 2 or FRAME_MASK) {
     DataOutputStream(this).apply {
-        writeByte(2 or FRAME_MASK)
         for ((x, y) in shape.vertex) {
             writeFloat(x.toFloat())
             writeFloat(y.toFloat())
@@ -159,6 +155,31 @@ fun RemoteHub.paint(
         with(shape.vertex.first()) {
             writeFloat(x.toFloat())
             writeFloat(y.toFloat())
+        }
+    }
+}
+
+fun RemoteHub.paint3D(
+    topic: String,
+    point: Vector3D
+) = paint(topic, 3) {
+    DataOutputStream(this).apply {
+        val (x, y, z) = point
+        writeFloat(x.toFloat())
+        writeFloat(y.toFloat())
+        writeFloat(z.toFloat())
+    }
+}
+
+fun RemoteHub.paint3D(
+    topic: String,
+    points: Iterable<Vector3D>
+) = paint(topic, 3 or FRAME_MASK) {
+    DataOutputStream(this).apply {
+        for ((x, y, z) in points) {
+            writeFloat(x.toFloat())
+            writeFloat(y.toFloat())
+            writeFloat(z.toFloat())
         }
     }
 }
