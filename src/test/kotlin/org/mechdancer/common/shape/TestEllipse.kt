@@ -1,8 +1,9 @@
 package org.mechdancer.common.shape
 
+import org.mechdancer.algebra.implement.vector.vector2D
 import org.mechdancer.simulation.Default.remote
 import org.mechdancer.simulation.paint
-import org.mechdancer.simulation.paintFrame2
+import org.mechdancer.simulation.paint2DFrame
 
 fun main() {
     val ellipse = Ellipse(.4, 0.8)
@@ -13,8 +14,8 @@ fun main() {
 
     while (true) {
         remote.paint("椭圆", ellipse.sample())
-        remote.paintFrame2("x 轴", listOf(x0 to .0, x1 to .0))
-        remote.paintFrame2("y 轴", listOf(.0 to y0, .0 to y1))
+        remote.paint2DFrame("x 轴", listOf(vector2D(x0, 0), vector2D(x1, 0)))
+        remote.paint2DFrame("y 轴", listOf(vector2D(0, y0), vector2D(0, y1)))
         Thread.sleep(500L)
     }
 }

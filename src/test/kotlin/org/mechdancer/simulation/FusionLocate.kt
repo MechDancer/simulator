@@ -28,9 +28,7 @@ fun main() = runBlocking {
         //  计算机器人位姿增量
         val (_, robotOnOdometry) = chassis.drive(v)
         val locatorOnOdometry = robotOnOdometry * locatorOnRobot
-        robotOnOdometry.also { (p, d) ->
-            remote.paint("chassis", p.x, p.y, d.rad)
-        }
+        robotOnOdometry.also { remote.paint("chassis", it) }
         if (Random.nextDouble() > 0.5)
             locatorOnOdometry.run {
                 remote.paint("locator",

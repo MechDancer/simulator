@@ -7,9 +7,10 @@ import org.mechdancer.common.Polar
 import org.mechdancer.geometry.angle.toAngle
 import org.mechdancer.geometry.angle.toDegree
 import org.mechdancer.geometry.angle.toVector
+import org.mechdancer.geometry.transformation.pose2D
 import org.mechdancer.simulation.Default
 import org.mechdancer.simulation.paint
-import org.mechdancer.simulation.paintVectors
+import org.mechdancer.simulation.paint2DFrame
 import org.mechdancer.simulation.random.Normal
 import kotlin.concurrent.thread
 
@@ -51,12 +52,12 @@ fun main() {
             }
             Default.remote.paint("15cm", inner)
             Default.remote.paint("10m", outer)
-            Default.remote.paint("机器人", .0, .0, .0)
+            Default.remote.paint("机器人", pose2D())
             Thread.sleep(1000L)
         }
     }
     while (true) {
-        Default.remote.paintVectors(
+        Default.remote.paint2DFrame(
             "激光雷达",
             points.map { it.copy(distance = it.distance * Normal.next(1.0, .01)).toVector2D() })
         Thread.sleep(100L)

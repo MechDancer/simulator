@@ -60,13 +60,12 @@ fun main() = runBlocking(Dispatchers.Default) {
         val robotToMap = robotOnMap.toMatrixTransformation()
         val lidarToMap = robotToMap * lidarToRobot
         remote.paint("机器人", robotOnMap)
-        val points =
-            lidar
-                .update(t * 1E-3, robotOnMap, lidarOnRobot, listOf(), obstacles)
-                .map { it.data }
-                .filterNot { it.distance.isNaN() }
-                .map { lidarToMap(it.toVector2D()).to2D() }
-                .toList()
-        remote.paintFrame2("雷达", points.map { (x, y) -> x to y })
+        lidar
+            .update(t * 1E-3, robotOnMap, lidarOnRobot, listOf(), obstacles)
+            .map { it.data }
+            .filterNot { it.distance.isNaN() }
+            .map { lidarToMap(it.toVector2D()).to2D() }
+            .toList()
+            .let { remote.paint2DFrame("雷达", it) }
     }
 }

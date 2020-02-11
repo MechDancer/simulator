@@ -69,79 +69,11 @@ fun RemoteHub.paint(
     }
 }
 
-/**
- * 画位姿信号
- */
-fun RemoteHub.paint(
-    topic: String,
-    x: Number,
-    y: Number,
-    theta: Number
-) = paint(topic, 2 or DIR_MASK) {
-    DataOutputStream(this).apply {
-        writeFloat(x.toFloat())
-        writeFloat(y.toFloat())
-        writeFloat(theta.toFloat())
-    }
-}
-
 /** 画位置信号 */
 fun RemoteHub.paint(
     topic: String,
     p: Vector2D
 ) = paint(topic, p.x, p.y)
-
-/** 画位姿信号 */
-fun RemoteHub.paint(
-    topic: String,
-    pose: Pose2D
-) = paint(topic, pose.p.x, pose.p.y, pose.d.rad)
-
-/**
- * 画单帧二维信号
- */
-fun RemoteHub.paintFrame2(
-    topic: String,
-    list: Iterable<Pair<Number, Number>>
-) = paint(topic, 2 or FRAME_MASK) {
-    DataOutputStream(this).apply {
-        for ((x, y) in list) {
-            writeFloat(x.toFloat())
-            writeFloat(y.toFloat())
-        }
-    }
-}
-
-/**
- * 画单帧向量信号
- */
-fun RemoteHub.paintVectors(
-    topic: String,
-    list: Iterable<Vector2D>
-) = paint(topic, 2 or FRAME_MASK) {
-    DataOutputStream(this).apply {
-        for ((x, y) in list) {
-            writeFloat(x.toFloat())
-            writeFloat(y.toFloat())
-        }
-    }
-}
-
-/**
- * 画单帧位姿信号
- */
-fun RemoteHub.paintPoses(
-    topic: String,
-    list: Iterable<Pose2D>
-) = paint(topic, 2 or FRAME_MASK or DIR_MASK) {
-    DataOutputStream(this).apply {
-        for ((p, d) in list) {
-            writeFloat(p.x.toFloat())
-            writeFloat(p.y.toFloat())
-            writeFloat(d.rad.toFloat())
-        }
-    }
-}
 
 fun RemoteHub.paint(
     topic: String,
@@ -159,19 +91,51 @@ fun RemoteHub.paint(
     }
 }
 
-fun RemoteHub.paint3D(
+/** 画位姿信号 */
+fun RemoteHub.paint(
     topic: String,
-    point: Vector3D
+    pose: Pose2D
+) = paint(topic, 2 or DIR_MASK) {
+    DataOutputStream(this).apply {
+        val (p, d) = pose
+        writeFloat(p.x.toFloat())
+        writeFloat(p.y.toFloat())
+        writeFloat(d.rad.toFloat())
+    }
+}
+
+/** 画三维位置信号 */
+fun RemoteHub.paint(
+    topic: String,
+    p: Vector3D
 ) = paint(topic, 3) {
     DataOutputStream(this).apply {
-        val (x, y, z) = point
+        val (x, y, z) = p
         writeFloat(x.toFloat())
         writeFloat(y.toFloat())
         writeFloat(z.toFloat())
     }
 }
 
-fun RemoteHub.paint3D(
+/**
+ * 画单帧位置信号
+ */
+fun RemoteHub.paint2DFrame(
+    topic: String,
+    list: Iterable<Vector2D>
+) = paint(topic, 2 or FRAME_MASK) {
+    DataOutputStream(this).apply {
+        for ((x, y) in list) {
+            writeFloat(x.toFloat())
+            writeFloat(y.toFloat())
+        }
+    }
+}
+
+/**
+ * 画单帧位置信号
+ */
+fun RemoteHub.paint3DFrame(
     topic: String,
     points: Iterable<Vector3D>
 ) = paint(topic, 3 or FRAME_MASK) {
@@ -180,6 +144,22 @@ fun RemoteHub.paint3D(
             writeFloat(x.toFloat())
             writeFloat(y.toFloat())
             writeFloat(z.toFloat())
+        }
+    }
+}
+
+/**
+ * 画单帧位姿信号
+ */
+fun RemoteHub.paintPoses(
+    topic: String,
+    list: Iterable<Pose2D>
+) = paint(topic, 2 or FRAME_MASK or DIR_MASK) {
+    DataOutputStream(this).apply {
+        for ((p, d) in list) {
+            writeFloat(p.x.toFloat())
+            writeFloat(p.y.toFloat())
+            writeFloat(d.rad.toFloat())
         }
     }
 }
