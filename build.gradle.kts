@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.70"
 }
 
 version = "0.0.3"
@@ -22,7 +22,7 @@ allprojects {
         // 自动依赖 kotlin 标准库
         implementation(kotlin("stdlib-jdk8"))
         // 线性代数
-        implementation(fileTree("libs"))
+        testImplementation("org.mechdancer", "linearalgebra", "+")
         // 使用示例中采用协程
         implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.2")
         // 支持网络工具
