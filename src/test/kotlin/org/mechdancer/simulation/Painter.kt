@@ -84,10 +84,9 @@ fun RemoteHub.paint(
             writeFloat(x.toFloat())
             writeFloat(y.toFloat())
         }
-        with(shape.vertex.first()) {
-            writeFloat(x.toFloat())
-            writeFloat(y.toFloat())
-        }
+        val (x, y) = shape.vertex.first()
+        writeFloat(x.toFloat())
+        writeFloat(y.toFloat())
     }
 }
 

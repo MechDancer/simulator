@@ -23,6 +23,7 @@ private val robot = struct(Chassis(Stamped(0L, pose2D()))) {
     Encoder(1) asSub { where(0, -.2, 0) }
     Encoder(2) asSub { where(0, 0, PI / 2) }
 }
+
 // 编码器在机器人上的位姿
 private val encodersOnRobot =
     robot.devices
